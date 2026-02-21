@@ -10,22 +10,54 @@
 
 .header-title {
     text-align: center;
-    margin: 10px auto;
+    margin: 30px auto;
 }
 
 .form {
-    width: 50%;
+    width: 40%;
     margin: 0 auto;
     text-align: center;
 }
 
-.form-group__title {
-    width: 50%;
-    text-align: center;
-    padding: 0 auto;
+.form-content {
+    margin-bottom: 20px;
 }
 
-.form-input__text {
-    width: 50%;
-    padding: 15px 100px;
+.form-group__title {
+    font-size: 20px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.form-input__text input{
+    width: 100%;
+    height: 35px;
+    border: 1px solid black;
+    border-radius: 3px;
+    font-size: 15px;
+}
+
+.register-btn {
+    background-color: black;
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+    width: 100%;
+    padding: 5px;
+    margin-top: 40px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.login-button {
+    text-align: center;
+    margin: 20px;
+}
+
+.login-btn {
+    text-decoration: none;
+}
+
+.error-message {
+    text-align: left;
 }
