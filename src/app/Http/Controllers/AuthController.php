@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
 
 use App\Models\User;
 
@@ -26,5 +27,12 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
         return redirect('/attendance');
+    }
+
+    // ログイン画面
+    public function login(LoginRequest $request)
+    {
+        
+        return view('auth.login');
     }
 }
