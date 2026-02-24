@@ -25,6 +25,11 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/attendance', [AttendanceController::class, 'attendance']);
+// 認証ルート
+Route::middleware('auth', 'verified')->group(function () {
+    // ログアウト
+    Route::post('/logout', [AuthController::class, 'logout']);
 
-
+    // 一般　出勤登録画面
+    Route::get('/attendance', [AttendanceController::class, 'attendance']);
+});

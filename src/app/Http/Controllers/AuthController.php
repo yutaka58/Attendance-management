@@ -9,6 +9,7 @@ use App\Http\Requests\LoginRequest;
 use App\Models\User;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -26,13 +27,31 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        return redirect('/attendance');
+        return redirect('/login');
     }
 
     // ログイン画面
     public function login(LoginRequest $request)
     {
-        
-        return view('auth.login');
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user=Auth::user();
+
+            return redirect('/attendance');
+            }
+
+        return back()->withErrors(['email' => 'ログイン情報が登録されていません']);
+    }
+
+    // ログアウト処理
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 }
