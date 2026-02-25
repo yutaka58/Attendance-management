@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 
+use App\Http\Controllers\AdminAuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +22,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// 一般ユーザー
 Route::get('/register', [AuthController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 
@@ -33,3 +36,14 @@ Route::middleware('auth', 'verified')->group(function () {
     // 一般　出勤登録画面
     Route::get('/attendance', [AttendanceController::class, 'attendance']);
 });
+
+
+// 管理者
+Route::get('/admin/login', [AdminAuthController::class, 'adminLogin']);
+
+
+Route::middleware('auth', 'verified')->group(function () {
+    Route::get('/admin/attendance/list', [AdminAuthController::class, 'AdminAttendanceList']);
+
+});
+
