@@ -39,10 +39,10 @@ Route::middleware('auth', 'verified')->group(function () {
 
 
 // 管理者
-Route::get('/admin/login', [AdminAuthController::class, 'adminLogin']);
+Route::get('/admin/login', [AdminAuthController::class, 'showLogin']);
+Route::post('/admin/login', [AdminAuthController::class, 'adminLogin']);
 
-
-Route::middleware('auth', 'verified')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/admin/attendance/list', [AdminAuthController::class, 'AdminAttendanceList']);
 
 });

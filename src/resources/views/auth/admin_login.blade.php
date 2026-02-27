@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <form class="form" action="/admin/login" method="get">
+    <form class="form" action="/admin/login" method="post">
         @csrf
         <div class="form-content">
             <div class="form-group__title">
