@@ -15,17 +15,22 @@ class AdminAuthController extends Controller
         return view('auth.admin_login');
     }
 
+    // 管理者ログイン機能
     public function adminLogin(AdminLoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
-            $adminuser=Auth::adminuser();
 
             return redirect('/admin/attendance/list');
             }
 
         return back()->withErrors(['email' => 'ログイン情報が登録されていません']);
+    }
+
+    public function AdminAttendanceList()
+    {
+        return view('admin_attendance_list'); // ビュー名は適宜合わせてください
     }
 }

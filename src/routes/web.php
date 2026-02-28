@@ -29,7 +29,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // 認証ルート
-Route::middleware('auth', 'verified')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     // ログアウト
     Route::post('/logout', [AuthController::class, 'logout']);
 
@@ -42,7 +42,7 @@ Route::middleware('auth', 'verified')->group(function () {
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin']);
 Route::post('/admin/login', [AdminAuthController::class, 'adminLogin']);
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/attendance/list', [AdminAuthController::class, 'AdminAttendanceList']);
 
 });
