@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\AdminAttendanceList;
 
 class AdminAttendanceController extends Controller
 {
-
+        public function adminAttendanceList()
+    {
+        return view('admin_attendance_list');
+    }
 }

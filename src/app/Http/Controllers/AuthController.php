@@ -27,7 +27,12 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-        return redirect('/login');
+
+        // 会員登録後、自動ログイン
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect('/attendance');
     }
 
     // ログイン画面
@@ -48,7 +53,7 @@ class AuthController extends Controller
     // ログアウト処理
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

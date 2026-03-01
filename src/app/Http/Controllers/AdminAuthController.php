@@ -29,8 +29,13 @@ class AdminAuthController extends Controller
         return back()->withErrors(['email' => 'ログイン情報が登録されていません']);
     }
 
-    public function AdminAttendanceList()
+    // ログアウト処理
+    public function adminLogout(Request $request)
     {
-        return view('admin_attendance_list'); // ビュー名は適宜合わせてください
+        Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/admin/login');
     }
 }

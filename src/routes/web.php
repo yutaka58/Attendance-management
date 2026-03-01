@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminAttendanceController;
 
 
 /*
@@ -43,7 +44,9 @@ Route::get('/admin/login', [AdminAuthController::class, 'showLogin']);
 Route::post('/admin/login', [AdminAuthController::class, 'adminLogin']);
 
 Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/admin/attendance/list', [AdminAuthController::class, 'AdminAttendanceList']);
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'adminAttendanceList']);
 
+    // ログアウト
+    Route::post('/admin/logout', [AdminAuthController::class, 'adminLogout']);
 });
 
