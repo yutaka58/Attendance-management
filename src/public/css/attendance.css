@@ -1,3 +1,53 @@
-.main {
-    background-color: red;
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+.work-grid {
+    background-color: rgb(240, 240, 240);
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.work-content {
+    text-align: center;
+}
+
+.work_status {
+    background-color: rgb(200, 200, 200);
+    padding: 8px 24px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.date {
+    font-size: 30px;
+}
+
+.time {
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.work-btn {
+    color: white;
+    background-color: black;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 5px 40px;
+    cursor: pointer;
+    margin-top: 50px;
 }

@@ -1,34 +1,30 @@
 @extends('layouts.user')
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('css/user.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/attendance.css') }}">
 @endsection
 
 @section('content')
 
-<main>
+<div class="work-grid">
+    <div class="work-content">
+        <p class="work_status">{{ $work_status->name ?? '未設定' }}</p>
+    </div>
+    <div class="work-content">
+        <p class="date">{{ $dt }}</p>
+    </div>
+    <div class="work-content">
+        <p class="time">{{ $time }}</p>
+    </div>
+    <div class="work-content">
+        <form action="/attendance" method="post">
+            @csrf
 
-    <div>
-        <div>
-            <p>勤務中のステータスを表示させるモデルを作成する</p>
-        </div>
+            @foreach($display_actions as $action)
+                <button class="work-btn" type="submit" name="action_id" value="{{ $action->id }}">{{ $action->name ?? '未設定' }}</button>
+            @endforeach
+        </form>
     </div>
-    <div>
-        <div>
-            <p>日付を表示させる</p>
-        </div>
-    </div>
-    <div>
-        <div>
-            <p>時間を表示させる</p>
-        </div>
-    </div>
-    <div class="">
-        <div class="">
-            <button class="work-btn" action="submit">出勤</button>
-        </div>
-    </div>
-
-</main>
+</div>
 
 @endsection
