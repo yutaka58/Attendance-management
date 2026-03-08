@@ -80,4 +80,9 @@ class AttendanceController extends Controller
 
         return redirect()->back();
     }
+
+    public function showList()
+    {
+        return view('attendance_list');
+    }
 }
