@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\WorkStatus;
 use App\Models\WorkAction;
+use App\Models\Attendance;
 
 use Carbon\Carbon;
 
@@ -13,27 +14,70 @@ class AttendanceController extends Controller
 {
     public function attendance()
     {
-        $work_status = WorkStatus::first(); // 現在の状態を取得
+        $user = auth()->user();
+        // ユーザーに紐づく現在のステータスを取得
+        $work_status = $user->work_status;
 
         // 現在のステータスに応じて、表示するボタンを固定
         $display_actions = [];
 
-        if ($work_status->name ==='勤務外') {
+        if (!$work_status || $work_status->name ==='勤務外') {
             $display_actions = WorkAction::where('name', '出勤')->get();
         } elseif ($work_status->name === '出勤中') {
-            $display_actions = WorkAction::where('name', ['退勤', '休憩入'])->get();
+            $display_actions = WorkAction::whereIn('name', ['退勤', '休憩入'])->get();
         } elseif ($work_status->name === '休憩中') {
             $display_actions = WorkAction::where('name', '休憩戻')->get();
         } elseif ($work_status->name === '退勤済') {
             $display_actions = WorkAction::where('name', 'お疲れ様でした。')->get();
         }
 
+        // 本日に「出勤」状態のユーザーであれば、表示させない
+        $alreadyCheckedIn = Attendance::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->exists();
         $work_actions = WorkAction::all();
+        if ($alreadyCheckedIn) {
+            $work_actions = $work_actions->where('name', '!=', '出勤');
+        }
 
+        // 年月日、時間のフォーマット指定
         $dt = Carbon::today()->isoFormat('YYYY年M月D日(ddd)');
-
         $time = Carbon::now()->format('H:i');
 
-        return view('/attendance', compact('work_status', 'dt', 'time', 'work_actions', 'display_actions'));
+        return view('/attendance', compact('work_status', 'dt', 'time', 'work_actions', 'display_actions', 'alreadyCheckedIn'));
+    }
+
+    public function storeAttendance(Request $request)
+    {
+        // 本日に「出勤」状態のユーザーであれば、表示させない
+        $alreadyCheckedIn = Attendance::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->exists();
+        $work_actions = WorkAction::all();
+        if ($alreadyCheckedIn) {
+            $work_actions = $work_actions->where('name', '!=', '出勤');
+        }
+
+        $user = auth()->user();
+        $action = WorkAction::find($request->action_id);
+
+        // 打刻ログを保存
+        Attendance::create([
+            'user_id' => $user->id,
+            'work_action_id' => $action->id,
+        ]);
+
+        // 現在のステータスに合わせて表示項目変化
+        if ($action->name === '出勤') {
+            $status =WorkStatus::where('name', '出勤中') ->first();
+            $user->update(['work_status_id' => $status->id]);
+        } elseif ($action->name === '休憩入') {
+            $status = WorkStatus::where('name', '休憩中')->first();
+            $user->update(['work_status_id' => $status->id]);
+        } elseif ($action->name === '休憩戻') {
+            $status = WorkStatus::where('name', '出勤中')->first();
+            $user->update(['work_status_id' => $status->id]);
+        } elseif ($action->name === '退勤') {
+            $status = WorkStatus::where('name', '退勤済')->first();
+            $user->update(['work_status_id' => $status->id]);
+        }
+
+        return redirect()->back();
     }
 }

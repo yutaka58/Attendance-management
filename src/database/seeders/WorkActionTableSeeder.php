@@ -19,7 +19,6 @@ class WorkActionTableSeeder extends Seeder
             ['name' => '退勤'],
             ['name' => '休憩入'],
             ['name' => '休憩戻'],
-            ['name' =>  'お疲れ様でした。'],
         ];
 
         WorkAction::insert($work_actions);

@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // 一般　出勤登録画面
     Route::get('/attendance', [AttendanceController::class, 'attendance']);
+    Route::post('/attendance', [AttendanceController::class, 'storeAttendance']);
 });
 
 
