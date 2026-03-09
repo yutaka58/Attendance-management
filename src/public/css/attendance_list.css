@@ -33,54 +33,49 @@ h2 {
 
 .list-calender {
     width: 100%;
-    border: none;
     border-radius: 5px;
     padding: 10px;
     margin-top: 30px;
     background-color: white;
-}
 
-.list-form__row {
-    display: flexbox;
-    justify-content: space-around;
-}
-
-.list-form__label,
-.list-form__data {
-    width: 100%;
-    border: none;
-    border-radius: 5px;
-    padding: 70px;
-    margin-top: 30px;
-    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
 .list-form__table {
     width: 100%;
     border-collapse: collapse;
-    /* 枠線を一本にする */
     background-color: white;
     margin-top: 20px;
 }
 
 .list-form__label {
-    padding: 15px;
-    border-bottom: 2px solid #eee;
-    /* 見出しの下に線を入れる */
+    padding: 10px;
+    border-bottom: 5px solid #eee;
+    border-radius: 10px;
     text-align: left;
     color: #333;
     font-weight: bold;
 }
 
 .list-form__data {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    /* 各行の間に薄い線を入れる */
+    padding: 10px;
+    border-bottom: 3px solid #eee;
     color: #666;
     vertical-align: middle;
 }
 
-/* 行にホバーした時に色を変えると見やすいです */
-tbody tr:hover {
-    background-color: #f9f9f9;
+.calender-btn {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 15px;
+    margin: 0 15px;
+}
+
+.current-month {
+    font-size: 20px;
 }

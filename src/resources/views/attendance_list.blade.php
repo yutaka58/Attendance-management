@@ -12,7 +12,11 @@
             <h2 class="list-form__title">勤怠一覧</h2>
         </div>
         <div class="list-inner">
-            <p class="list-calender">カレンダーが入る</p>
+            <div class="list-calender">
+                <a href="?month={{ $prevMonth }}" class="calender_btn">← 前月</a>
+                <span class="current-month">{{ $currentMonth->format('Y/m') }}</span>
+                <a href="?month{{ $nextMonth }}" class="calender_btn">翌月 →</a>
+            </div>
             <table class="list-form__table">
                 <thead>
                     <tr class="list-form__row">
@@ -25,10 +29,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- ここに実際のデータをループで表示させます --}}
-                    {{-- @foreach($attendances as $attendance) --}}
+                    @foreach($attendances as $attendance)
                     <tr class="list-form__row">
-                        <td class="list-form__data">2026/03/08(日)</td>
+                        <td class="list-form__data">{{ $attendance->created_at->format('m/d(D)') }}</td>
                         <td class="list-form__data">09:00</td>
                         <td class="list-form__data">18:00</td>
                         <td class="list-form__data">01:00</td>
@@ -37,7 +40,7 @@
                             <a href="#" class="detail-link">詳細</a>
                         </td>
                     </tr>
-                    {{-- @endforeach --}}
+                    @endforeach
                 </tbody>
             </table>
         </div>

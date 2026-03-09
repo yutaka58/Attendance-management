@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'storeAttendance']);
 
     // 勤怠一覧画面
-    Route::get('attendance/list', [AttendanceController::class, 'showList']);
+    Route::get('attendance/list', [AttendanceController::class, 'attendanceList']);
 });
 
 

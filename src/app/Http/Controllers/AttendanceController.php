@@ -16,6 +16,19 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
         // ユーザーに紐づく現在のステータスを取得
+
+        // 今日の打刻があるか確認
+        $alreadyCheckedIn = Attendance::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->exists();
+
+        // 今日の打刻がまだだが、「勤務外」などのステータスとなっていた場合リセットする
+        if (!$alreadyCheckedIn && $user->work_status->name !== '勤務外') {
+            $initialStatus = WorkStatus::where('name', '勤務外')->first();
+            $user->update(['work_status_id' => $initialStatus->id]);
+
+            // リレーションを最新に更新
+            $user->load('work_status');
+        }
+
         $work_status = $user->work_status;
 
         // 現在のステータスに応じて、表示するボタンを固定
@@ -81,8 +94,18 @@ class AttendanceController extends Controller
         return redirect()->back();
     }
 
-    public function showList()
+    public function attendanceList(Request $request)
     {
-        return view('attendance_list');
+        // パラーメータがなければ今月を取得
+        $monthParam = $request->query('month', Carbon::now()->format('Y-m'));
+        $currentMonth = Carbon::parse($monthParam);
+
+        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+
+        $attendances = Attendance::whereYear('created_at', $currentMonth->year)->whereMonth('created_at', $currentMonth->month)->get();
+
+
+        return view('attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances'));
     }
 }
