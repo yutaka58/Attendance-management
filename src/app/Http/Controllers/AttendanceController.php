@@ -21,7 +21,8 @@ class AttendanceController extends Controller
         $alreadyCheckedIn = Attendance::where('user_id', auth()->id())->whereDate('created_at', Carbon::today())->exists();
 
         // 今日の打刻がまだだが、「勤務外」などのステータスとなっていた場合リセットする
-        if (!$alreadyCheckedIn && $user->work_status->name !== '勤務外') {
+        // 初期ログイン時の「work_status」が null の場合も考慮
+        if (!$alreadyCheckedIn && (!$user->work_status || $user->work_status->name !== '勤務外')) {
             $initialStatus = WorkStatus::where('name', '勤務外')->first();
             $user->update(['work_status_id' => $initialStatus->id]);
 
@@ -78,7 +79,7 @@ class AttendanceController extends Controller
 
         // 現在のステータスに合わせて表示項目変化
         if ($action->name === '出勤') {
-            $status =WorkStatus::where('name', '出勤中') ->first();
+            $status = WorkStatus::where('name', '出勤中') ->first();
             $user->update(['work_status_id' => $status->id]);
         } elseif ($action->name === '休憩入') {
             $status = WorkStatus::where('name', '休憩中')->first();
@@ -103,8 +104,11 @@ class AttendanceController extends Controller
         $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
         $nextMonth = $currentMonth->copy()->subMonth()->format('Y-m');
 
-        $attendances = Attendance::whereYear('created_at', $currentMonth->year)->whereMonth('created_at', $currentMonth->month)->get();
-
+        $user = auth()->user();
+        // ユーザーの打刻データを取得し、日付ごとにグループ化する
+        $attendances = Attendance::where('user_id', $user->id)->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        });
 
         return view('attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances'));
     }
