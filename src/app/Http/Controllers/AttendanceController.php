@@ -112,4 +112,12 @@ class AttendanceController extends Controller
 
         return view('attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances'));
     }
+
+    public function attendanceDetail()
+    {
+        $user = auth()->user()
+        $users = User::all();
+
+        return view('attendance_detail', compact('user', 'users'));
+    }
 }

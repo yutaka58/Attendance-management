@@ -1,0 +1,67 @@
+.list-form {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(240, 240, 240);
+}
+
+h2 {
+    padding: 0;
+    margin: 0;
+}
+
+.list-form__grid {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    padding-top: 50px;
+}
+
+.list-form__title {
+    display: flex;
+    align-items: center;
+}
+
+.list-form__title::before {
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 1.2em;
+    background-color: black;
+    margin-right: 20px;
+}
+
+.list-form__table {
+    width: 100%;
+    background-color: white;
+    margin-top: 40px;
+
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid rgb(240, 240, 240)c;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.list-form__label {
+    padding: 30px 60px;
+    border-bottom: 5px solid #eee;
+    border-top-left-radius: 10px;
+    text-align: left;
+    color: #333;
+    font-weight: bold;
+}
+
+.list-form__data {
+    padding: 10px;
+    border-bottom: 3px solid #eee;
+    color: #666;
+    vertical-align: middle;
+}
+
+.calender-btn {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 15px;
+    margin: 0 15px;
+}
