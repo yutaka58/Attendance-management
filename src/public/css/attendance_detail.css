@@ -50,8 +50,7 @@ h2 {
 }
 
 .list-form__label {
-    padding: 30px 60px;
-    text-align: left;
+    text-align: center;
     color: gray;
     font-weight: bold;
 }
@@ -62,18 +61,52 @@ h2 {
     font-weight: bold;
 }
 
-.list-form__data {
-
-}
-
 .list-form__data-container {
-    padding: 30px 60px;
-    text-align: left;
+    padding: 13px 0;
     font-weight: bold;
-    
     display: flex;
     justify-content: space-between;
-    align-items: left;
-    width: 100%;
+    width: 400px;
     margin: 0 auto;
+}
+
+.form-container {
+    border: 1px solid rgb(220, 220, 220);
+    border-radius: 5px;
+    padding: 5px 15px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.list-form__data-wrapper {
+    width: 450px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+.remarks-column {
+    display: block;
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid rgb(220, 220, 220);
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.correction-btn {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.correction {
+    color: #fff;
+    background-color: #000;
+    padding: 10px 40px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 5px;
 }
