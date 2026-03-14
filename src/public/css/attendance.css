@@ -3,7 +3,6 @@ html, body {
     overflow: hidden;
 }
 
-/* ブラウザのmarginを無効 */
 p {
     margin: 0;
     padding: 0;

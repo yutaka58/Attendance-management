@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\WorkStatus;
 use App\Models\WorkAction;
 use App\Models\Attendance;
+use App\Models\User;
 
 use Carbon\Carbon;
 
@@ -115,9 +116,8 @@ class AttendanceController extends Controller
 
     public function attendanceDetail()
     {
-        $user = auth()->user()
-        $users = User::all();
 
-        return view('attendance_detail', compact('user', 'users'));
+
+        return view('attendance_detail');
     }
 }
