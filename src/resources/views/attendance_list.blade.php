@@ -14,8 +14,10 @@
         <div class="list-inner">
             <div class="list-calender">
                 <a href="?month={{ $prevMonth }}" class="calender_btn">← 前月</a>
-                <span class="current-month">{{ $currentMonth->format('Y/m') }}</span>
-                <a href="?month{{ $nextMonth }}" class="calender_btn">翌月 →</a>
+                <span class="current-month">
+                    <i class="fa-solid fa-calendar-days"></i> {{ $currentMonth->format('Y/m') }}
+                </span>
+                <a href="?month={{ $nextMonth }}" class="calender_btn">翌月 →</a>
             </div>
             <table class="list-form__table">
                 <thead>
@@ -69,7 +71,7 @@
                                 // 「分」を「00:00」形式に変換
                                 $workHours = floor($netWorkMinutes / 60);
                                 $workMinutes = $netWorkMinutes % 60;
-                                $workTimeDisplay = sprintf('%02d:%02d', $hours, $minutes);
+                                $workTimeDisplay = sprintf('%02d:%02d', $workHours, $workMinutes);
                             }
                         @endphp
 
@@ -77,13 +79,13 @@
                             {{-- 日付 --}}
                             <td class="list-form__data">{{ Carbon\Carbon::parse($date)->isoFormat('MM/DD(ddd)') }}</td>
                             {{-- 出勤 --}}
-                            <td class="list-form__data">{{ $clockIn ? $clockIn->created_at->format('H:i') : '--:--' }}</td>
+                            <td class="list-form__data">{{ $clockIn ? $clockIn->created_at->format('H:i'): null }}</td>
                             {{-- 退勤 --}}
-                            <td class="list-form__data">{{ $clockOut ? $clockOut->created_at->format('H:i') : '--:--' }}</td>
+                            <td class="list-form__data">{{ $clockOut ? $clockOut->created_at->format('H:i'): null }}</td>
                             {{-- 休憩合計時間 --}}
-                            <td class="list-form__data">{{ $restTimeDisplay }}</td>
+                            <td class="list-form__data">{{ $totalRestMinutes > 0 ? $restTimeDisplay : '' }}</td>
                             {{-- 勤務時間 --}}
-                            <td class="list-form__data">{{ $workTimeDisplay }}</td>
+                            <td class="list-form__data">{{ ($clockIn && $clockOut) ? $workTimeDisplay : '' }}</td>
                             <td class="list-form__data">
                                 <a href="/attendance/detail" class="detail-link">詳細</a>
                             </td>

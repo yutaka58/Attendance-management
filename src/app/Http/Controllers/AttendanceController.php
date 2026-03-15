@@ -74,6 +74,7 @@ class AttendanceController extends Controller
 
         // 打刻ログを保存
         Attendance::create([
+            'user_name'=> $user->name,
             'user_id' => $user->id,
             'work_action_id' => $action->id,
         ]);
@@ -103,11 +104,15 @@ class AttendanceController extends Controller
         $currentMonth = Carbon::parse($monthParam);
 
         $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
-        $nextMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
 
         $user = auth()->user();
         // ユーザーの打刻データを取得し、日付ごとにグループ化する
-        $attendances = Attendance::where('user_id', $user->id)->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
+
+        $startOfMonth = $currentMonth->copy()->startOfMonth();
+        $endOfMonth = $currentMonth->copy()->endOfMonth();
+
+        $attendances = Attendance::where('user_id', $user->id)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
             return $item->created_at->format('Y-m-d');
         });
 
@@ -116,8 +121,32 @@ class AttendanceController extends Controller
 
     public function attendanceDetail()
     {
+        // 出勤打刻時間を取得
+        $attendance = Attendance::where('user_id', auth()->id())->where('work_action_id', 1)->orderBy('created_at', 'desc')->first();
+        $year = $attendance ? $attendance->created_at->format('Y'): null;
+        $month = $attendance ? $attendance->created_at->format('n'): null;
+        $day = $attendance ? $attendance->created_at->format('j'): null;
+
+        $start_time = $attendance ? $attendance->created_at->format('H:i'): null;
+
+        // 退勤打刻時間を取得
+        $end_attendance = Attendance::where('user_id', auth()->id())->where('work_action_id', 2)->orderBy('created_at', 'desc')->first();
+        $end_time = $end_attendance ? $end_attendance->created_at->format('H:i'): null;
 
 
-        return view('attendance_detail');
+        // 休憩入(id:3)と休憩戻(id:4)をすべて取得
+        $rests_start = Attendance::where('user_id', auth()->id())->where('work_action_id', 3)->orderBy('created_at', 'asc')->get();
+        $rests_end = Attendance::where('user_id', auth()->id())->where('work_action_id', 4)->orderBy('created_at', 'asc')->get();
+
+        // 休憩のペアを作成
+        $rests = [];
+        foreach($rests_start as $index => $start) {
+            $rests[] = [
+                'start' => $start->created_at->format('H:i'),
+                'end' => isset($rests_end[$index]) ? $rests_end[$index]->created_at->format('H:i'): null
+            ];
+        }
+
+        return view('attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_attendance', 'end_time', 'rests_start', 'rests_end', 'rests'));
     }
 }
