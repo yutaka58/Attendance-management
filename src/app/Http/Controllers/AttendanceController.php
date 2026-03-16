@@ -112,11 +112,22 @@ class AttendanceController extends Controller
         $startOfMonth = $currentMonth->copy()->startOfMonth();
         $endOfMonth = $currentMonth->copy()->endOfMonth();
 
-        $attendances = Attendance::where('user_id', $user->id)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
+        $tempDay = $startOfMonth->copy();
+
+        $allDays = [];
+        $timeDay = $startOfMonth->copy();
+        while($tempDay->lte($endOfMonth)) {
+            $allDays[$tempDay->format('Y-m-d')] = collect();
+            $tempDay->addDay();
+        }
+
+        $dbAttendances = Attendance::where('user_id', $user->id)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
             return $item->created_at->format('Y-m-d');
         });
 
-        return view('attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances'));
+        $attendances = collect($allDays)->merge($dbAttendances);
+
+        return view('attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances', 'tempDay'));
     }
 
     public function attendanceDetail()

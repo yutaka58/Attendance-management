@@ -1,7 +1,8 @@
 .list-form {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: rgb(240, 240, 240);
+    padding-bottom: 50px;
 }
 
 h2 {
@@ -48,28 +49,34 @@ h2 {
 
 .list-form__table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     background-color: white;
     margin-top: 20px;
 
     border: 1px solid rgb(240, 240, 240);
     border-radius: 10px;
+    overflow: hidden;
 }
 
 .list-form__label {
-    padding: 10px;
+    padding: 10px 15px;
     border-bottom: 5px solid #eee;
     border-radius: 10px;
-    text-align: left;
-    color: #333;
+    text-align: center;
+    color: #666;
     font-weight: bold;
 }
 
 .list-form__data {
-    padding: 10px;
+    padding: 10px 15px;
     border-bottom: 3px solid #eee;
     color: #666;
-    vertical-align: middle;
+    text-align: center;
+}
+
+.list-form__table td:nth-child(1) {
+    padding-left: 50px;
 }
 
 .calender-btn {
@@ -83,9 +90,4 @@ h2 {
     font-weight: bold;
     font-size: 1.2em;
     margin: 0 20px;
-}
-
-.current-month i {
-    margin-right: 8px;
-    color: #555;
 }
