@@ -136,7 +136,7 @@ class AttendanceController extends Controller
 
         $startOfDay = $targetDate->copy()->startOfDay();
         $endOfDay = $targetDate->copy()->endOfDay();
-        $userId = auth()->user();
+        $userId = auth()->id();
 
         // 出勤打刻を取得
         $attendance = Attendance::where('user_id', $userId)->where('work_action_id', 1)->whereBetween('created_at', [$startOfDay, $endOfDay])->first();
@@ -145,8 +145,8 @@ class AttendanceController extends Controller
         $end_attendance = Attendance::where('user_id', $userId)->where('work_action_id', 2)->whereBetween('created_at', [$startOfDay, $endOfDay])->first();
 
         // 休憩入・休憩戻の打刻時間を取得
-        $rests_start = Attendance::where('user_id', $userId)->where('work_action_id', 3)->orderBy('created_at', 'asc')->get();
-        $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->orderBy('created_at', 'asc')->get();
+        $rests_start = Attendance::where('user_id', $userId)->where('work_action_id', 3)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
+        $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
         // 休憩のペアを作成
         $rests = [];
         foreach($rests_start as $index => $start) {
