@@ -43,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // 勤怠詳細画面
     Route::get('attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail']);
+    // 勤怠詳細画面　修正依頼
+    Route::post('attendance/detail', [AttendanceController::class, 'timeCorrection']);
 });
 
 

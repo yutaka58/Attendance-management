@@ -11,80 +11,95 @@
         <div class="list-form__heading">
             <h2 class="list-form__title">勤怠詳細</h2>
         </div>
-        <div class="list-inner">
-            <table class="list-form__table">
-                <tr class="list-form__row">
-                    <th class="list-form__label">名前</th>
-                    <td class="list-form__data">
-                        <div class="list-form__data-container">
-                            <span class="form-container" style="border: none;">{{ auth()->user()->name }}</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="list-form__row">
-                    <th class="list-form__label">日付</th>
-                    <td class="list-form__data">
-                        <div class="list-form__data-container">
-                            <span class="form-container" style="border: none;">{{ $year }}年</span>
-                            <span class="form-container" style="border: none;">{{ $month }}月{{ $day }}日</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="list-form__row">
-                    <th class="list-form__label">出勤・退勤</th>
-                    <td class="list-form__data">
-                        <div class="list-form__data-container">
-                            <input type="time" class="form-control" value="{{ $start_time }}"></input>
-                            <span class="separator">～</span>
-                            <input type="time" class="form-control" value="{{ $end_time }}"></input>
-                        </div>
-                    </td>
-                </tr>
-                @foreach($rests as $index => $rest)
+
+        <form action="/attendance/detail" method="post">
+            @csrf
+            {{-- どの勤怠データを修正するかを特定するための隠しID --}}
+            <input type="hidden" name="attendance_id" value="{{ $attendance->id ?? '' }}">
+            
+            <div class="list-inner">
+                <table class="list-form__table">
                     <tr class="list-form__row">
-                        <th class="list-form__label">
-                            休憩{{ $index == 0 ? '': $index + 1 }}
-                        </th>
+                        <th class="list-form__label">名前</th>
                         <td class="list-form__data">
                             <div class="list-form__data-container">
-                                <input type="time" name="rest_start[]" class="form-control" value="{{ $rest['start'] }}"></input>
-                                <span class="separator">～</span>
-                                <input type="time" name="rest_end[]" class="form-control" value="{{ $rest['end'] }}"></input>
+                                <span class="form-container" style="border: none;">{{ auth()->user()->name }}</span>
                             </div>
                         </td>
                     </tr>
-                @endforeach
-                <tr class="list-form__row">
-                    <th class="list-form__label">
-                        @if(count($rests) == 0)
-                            休憩
-                        @else
-                            休憩{{ count($rests) + 1 }}
-                        @endif
-                    </th>
-                    <td class="list-form__data">
-                        <div class="list-form__data-container">
-                            <span class="form-container"></span>
-                            <span class="separator">～</span>
-                            <span class="form-container"></span>
-                        </div>
-                    </td>
-                </tr>
-                <tr class="list-form__row">
-                    <th class="list-form__label">備考</th>
-                    <td class="list-form__data">
-                        <div class="list-form__data-container">
-                            <div class="list-form__data-wrapper">
-                                <input type="text" class="remarks-column"></input>
+                    <tr class="list-form__row">
+                        <th class="list-form__label">日付</th>
+                        <td class="list-form__data">
+                            <div class="list-form__data-container">
+                                <span class="form-container" style="border: none;">{{ $year }}年</span>
+                                <span class="form-container" style="border: none;">{{ $month }}月{{ $day }}日</span>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <div class="correction-btn">
-                <button class="correction">修正</button>
+                        </td>
+                    </tr>
+                    <tr class="list-form__row">
+                        <th class="list-form__label">出勤・退勤</th>
+                        <td class="list-form__data">
+                            <div class="list-form__data-container">
+                                <input type="time" name="start_time" class="form-control" value="{{ old('start_time', $start_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                <span class="separator">～</span>
+                                <input type="time" name="end_time" class="form-control" value="{{ old('end_time', $end_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                            </div>
+                        </td>
+                    </tr>
+                    @foreach($rests as $index => $rest)
+                        <tr class="list-form__row">
+                            <th class="list-form__label">
+                                休憩{{ $index == 0 ? '': $index + 1 }}
+                            </th>
+                            <td class="list-form__data">
+                                <div class="list-form__data-container">
+                                    <input type="time" name="rest_start[]" class="form-control" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                    <span class="separator">～</span>
+                                    <input type="time" name="rest_end[]" class="form-control" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    <tr class="list-form__row">
+                        <th class="list-form__label">
+                            @if(count($rests) == 0)
+                                休憩
+                            @else
+                                休憩{{ count($rests) + 1 }}
+                            @endif
+                        </th>
+                        <td class="list-form__data">
+                            <div class="list-form__data-container">
+                                <span class="form-container"></span>
+                                <span class="separator">～</span>
+                                <span class="form-container"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="list-form__row">
+                        <th class="list-form__label">備考</th>
+                        <td class="list-form__data">
+                            <div class="list-form__data-container">
+                                <div class="list-form__data-wrapper">
+                                    <input type="text" name="remarks_column" class="remarks-column" 
+                                        value="{{ old('remarks_column', $correction->remarks ?? '') }}" 
+                                        {{ isset($correction) ? 'readonly' : '' }}>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="correction-btn">
+                    @if(!isset($correction))
+                        <button type="submit" class="correction">修正</button>
+                    @else
+                        <p class="waiting-message" style="color: red; font-weight: bold;">
+                            *承認待ちのため修正はできません。
+                        </p>
+                    @endif
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 

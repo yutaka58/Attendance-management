@@ -120,4 +120,5 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-size: 15px;
     font-weight: bold;
     border-radius: 5px;
+    cursor: pointer;
 }

@@ -8,6 +8,7 @@ use App\Models\WorkStatus;
 use App\Models\WorkAction;
 use App\Models\Attendance;
 use App\Models\User;
+use App\Models\CorrectionRequest;
 
 use Carbon\Carbon;
 
@@ -156,13 +157,37 @@ class AttendanceController extends Controller
             ];
         }
 
+        $correction = null;
+        if ($attendance) {
+            $correction = CorrectionRequest::where('user_id', $userId)->where('attendance_id', $attendance->id)->latest()->first();
+        }
+
         // 表示用の変数
         $year = $targetDate->format('Y');
         $month = $targetDate->format('n');
         $day = $targetDate->format('j');
-        $start_time = $attendance ? $attendance->created_at->format('H:i'): null ;
-        $end_time = $end_attendance ? $end_attendance->created_at->format('H:i'): null ;
 
-        return view('attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests'));
+        // 申請があればそれを優先、なければ元の打刻。どちらもなければ null
+        $start_time = $correction ? $correction->start_time : ($attendance ? $attendance->created_at->format('H:i') : '');
+        $end_time = $correction ? $correction->end_time : ($end_attendance ? $end_attendance->created_at->format('H:i') : '');
+
+        return view('attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction'));
+    }
+
+    public function timeCorrection(Request $request)
+    {
+        $userId = auth()->id();
+
+        CorrectionRequest::create([
+            'attendance_id' => $request->attendance_id,
+            'user_id'       => $request->user_id,
+            'start_time'    => $request->start_time,
+            'end_time'      => $request->end_time,
+            // 休憩が配列の場合は json_encode するか、最初の1つを保存する
+            'rest_start'    => is_array($request->rest_start) ? json_encode($request->rest_start) : $request->rest_start,
+            'rest_end'      => is_array($request->rest_end) ? json_encode($request->rest_end) : $request->rest_end,
+        ]);
+
+    return redirect()->back()->with('message', '*承認待ちのため修正はできません。');
     }
 }
