@@ -87,7 +87,7 @@
                             {{-- 勤務時間 --}}
                             <td class="list-form__data">{{ ($clockIn && $clockOut) ? $workTimeDisplay : '' }}</td>
                             <td class="list-form__data">
-                                <a href="/attendance/detail" class="detail-link">詳細</a>
+                                <a href="/attendance/detail/{{ $date }}" class="detail-link">詳細</a>
                             </td>
                         </tr>
                     @endforeach

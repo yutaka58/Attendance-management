@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('attendance/list', [AttendanceController::class, 'attendanceList']);
 
     // 勤怠詳細画面
-    Route::get('attendance/detail', [AttendanceController::class, 'attendanceDetail']);
+    Route::get('attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail']);
 });
 
 
