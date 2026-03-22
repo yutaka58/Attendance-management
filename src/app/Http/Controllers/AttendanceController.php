@@ -187,7 +187,7 @@ class AttendanceController extends Controller
             'user_id'       => $request->user_id,
             'start_time'    => $request->start_time,
             'end_time'      => $request->end_time,
-            // 休憩が配列の場合は json_encode するか、最初の1つを保存する
+
             'rest_start'    => is_array($request->rest_start) ? json_encode($request->rest_start) : $request->rest_start,
             'rest_end'      => is_array($request->rest_end) ? json_encode($request->rest_end) : $request->rest_end,
         ]);

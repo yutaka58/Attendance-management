@@ -13,12 +13,9 @@
             <h2 class="list-form__title">申請一覧</h2>
         </div>
         <div class="list-inner">
-            <div class="list-calender">
-                <a href="" class="calender_btn">← 前月</a>
-                <span class="current-month">
-                    <i class="fa-solid fa-calendar-days"></i>
-                </span>
-                <a href="" class="calender_btn">翌月 →</a>
+            <div class="tab-items">
+                <a href="/mypage?page=sell" class="tab-item">承認待ち</a>
+                <a href="/mypage?page=buy" class="tab-item">承認済み</a>
             </div>
             <table class="list-form__table">
                 <thead>

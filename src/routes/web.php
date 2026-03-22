@@ -33,7 +33,7 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
 
-// 認証ルート
+// 一般　認証ルート
 Route::middleware(['auth', 'verified'])->group(function () {
     // ログアウト
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -43,27 +43,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'storeAttendance']);
 
     // 勤怠一覧画面
-    Route::get('attendance/list', [AttendanceController::class, 'attendanceList']);
+    Route::get('/attendance/list', [AttendanceController::class, 'attendanceList']);
 
     // 勤怠詳細画面
-    Route::get('attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail']);
+    Route::get('/attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail']);
     // 勤怠詳細画面　修正依頼
-    Route::post('attendance/detail', [AttendanceController::class, 'timeCorrection']);
+    Route::post('/attendance/detail', [AttendanceController::class, 'timeCorrection']);
 
     // 申請一覧画面
     Route::get('/stamp_correction_request/list', [StampCorrectionController::class, 'correctionRequest']);
 });
 
 
-// 管理者
+// 管理者　認証ルート
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin']);
 Route::post('/admin/login', [AdminAuthController::class, 'adminLogin']);
 
 Route::middleware(['auth:admin'])->group(function () {
-    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'adminAttendanceList']);
-
     // ログアウト
     Route::post('/admin/logout', [AdminAuthController::class, 'adminLogout']);
+
+    // 勤怠一覧画面
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'showAttendanceList']);
+
+    // 勤怠詳細画面
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'adminDetail']);
+
+    // スタッフ一覧画面
+    Route::get('/admin/staff/list', [AdminAttendanceController::class, 'staffList']);
+    // スタッフ別勤怠一覧画面
+    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffDetail']);
 
     // 申請一覧画面
     // Route::get('/stamp_correction_request/list'. [AdminStampCorrectionController::class, 'admin_correction_request']);
