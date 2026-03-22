@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\AttendanceDetailRequest;
 
 use App\Models\WorkStatus;
 use App\Models\WorkAction;
@@ -167,6 +168,9 @@ class AttendanceController extends Controller
         $month = $targetDate->format('n');
         $day = $targetDate->format('j');
 
+        // ★ 常に空の休憩枠を1つ追加する
+        $rests[] = ['start' => '', 'end' => ''];
+
         // 申請があればそれを優先、なければ元の打刻。どちらもなければ null
         $start_time = $correction ? $correction->start_time : ($attendance ? $attendance->created_at->format('H:i') : '');
         $end_time = $correction ? $correction->end_time : ($end_attendance ? $end_attendance->created_at->format('H:i') : '');
@@ -174,7 +178,7 @@ class AttendanceController extends Controller
         return view('attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction'));
     }
 
-    public function timeCorrection(Request $request)
+    public function timeCorrection(AttendanceDetailRequest $request)
     {
         $userId = auth()->id();
 

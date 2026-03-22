@@ -64,6 +64,7 @@ h2 {
     justify-content: space-between;
     width: 400px;
     margin: 0 auto;
+    flex-wrap: wrap;
 }
 
 .form-container {
@@ -96,6 +97,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     align-items: flex-start;
 }
 
+.list-form__remarks-container {
+    width: 400px;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column;
+}
+
 .remarks-column {
     display: block;
     width: 100%;
@@ -121,4 +129,19 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.error_message {
+    width: 100%;
+    color: red;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 5px 0 0 0;
+    text-align: left;
+}
+
+/* フォームとセパレーターが横に並ぶように維持 */
+.form-control,
+.separator {
+    flex-shrink: 0;
 }

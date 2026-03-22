@@ -43,6 +43,13 @@
                                 <input type="time" name="start_time" class="form-control" value="{{ old('start_time', $start_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
                                 <span class="separator">～</span>
                                 <input type="time" name="end_time" class="form-control" value="{{ old('end_time', $end_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                {{-- エラーメッセージをコンテナ内の最後に配置 --}}
+                                @error('start_time')
+                                    <p class="error_message">{{ $message }}</p>
+                                @enderror
+                                @error('end_time')
+                                    <p class="error_message">{{ $message }}</p>
+                                @enderror
                             </div>
                         </td>
                     </tr>
@@ -56,42 +63,31 @@
                                     <input type="time" name="rest_start[]" class="form-control" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
                                     <span class="separator">～</span>
                                     <input type="time" name="rest_end[]" class="form-control" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                    @error('rest_start.'.$index)
+                                        <p class="error_message">{{ $message }}</p>
+                                    @enderror
+                                    @error('end_start.'.$index)
+                                        <p class="error_message">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </td>
                         </tr>
                     @endforeach
                     <tr class="list-form__row">
-                        <th class="list-form__label">
-                            @if(count($rests) == 0)
-                                休憩
-                            @else
-                                休憩{{ count($rests) + 1 }}
-                            @endif
-                        </th>
-                        <td class="list-form__data">
-                            <div class="list-form__data-container">
-                                <span class="form-container"></span>
-                                <span class="separator">～</span>
-                                <span class="form-container"></span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="list-form__row">
                         <th class="list-form__label">備考</th>
                         <td class="list-form__data">
-                            <div class="list-form__data-container">
-                                <div class="list-form__data-wrapper">
-                                    <input type="text" name="remarks_column" class="remarks-column" 
-                                        value="{{ old('remarks_column', $correction->remarks ?? '') }}" 
-                                        {{ isset($correction) ? 'readonly' : '' }}>
-                                </div>
+                            <div class="list-form__remarks-container">
+                                <input type="text" name="remarks_column" class="remarks-column" value="{{ old('remarks_column', $correction->remarks ?? '') }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                @error('remarks_column')
+                                    <p class="error_message">{{ $message }}</p>
+                                @enderror
                             </div>
                         </td>
                     </tr>
                 </table>
                 <div class="correction-btn">
                     @if(!isset($correction))
-                        <button type="submit" class="correction">修正</button>
+                        <button type="submit" name="correction" class="correction">修正</button>
                     @else
                         <p class="waiting-message" style="color: red; font-weight: bold;">
                             *承認待ちのため修正はできません。
