@@ -66,7 +66,7 @@
                                     @error('rest_start.'.$index)
                                         <p class="error_message">{{ $message }}</p>
                                     @enderror
-                                    @error('end_start.'.$index)
+                                    @error('rest_end.'.$index)
                                         <p class="error_message">{{ $message }}</p>
                                     @enderror
                                 </div>
