@@ -1,11 +1,15 @@
 <?php
 
+// 一般
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\StampCorrectionController;
 
+// 管理者
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminAttendanceController;
+use App\Http\Controllers\AdminStampCorrectionController;
 
 
 /*
@@ -45,6 +49,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail']);
     // 勤怠詳細画面　修正依頼
     Route::post('attendance/detail', [AttendanceController::class, 'timeCorrection']);
+
+    // 申請一覧画面
+    Route::get('/stamp_correction_request/list', [StampCorrectionController::class, 'correctionRequest']);
 });
 
 
@@ -57,5 +64,8 @@ Route::middleware(['auth:admin'])->group(function () {
 
     // ログアウト
     Route::post('/admin/logout', [AdminAuthController::class, 'adminLogout']);
+
+    // 申請一覧画面
+    // Route::get('/stamp_correction_request/list'. [AdminStampCorrectionController::class, 'admin_correction_request']);
 });
 

@@ -14,9 +14,8 @@
 
         <form action="/attendance/detail" method="post">
             @csrf
-            {{-- どの勤怠データを修正するかを特定するための隠しID --}}
+
             <input type="hidden" name="attendance_id" value="{{ $attendance->id ?? '' }}">
-            
             <div class="list-inner">
                 <table class="list-form__table">
                     <tr class="list-form__row">
@@ -43,7 +42,6 @@
                                 <input type="time" name="start_time" class="form-control" value="{{ old('start_time', $start_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
                                 <span class="separator">～</span>
                                 <input type="time" name="end_time" class="form-control" value="{{ old('end_time', $end_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
-                                {{-- エラーメッセージをコンテナ内の最後に配置 --}}
                                 @error('start_time')
                                     <p class="error_message">{{ $message }}</p>
                                 @enderror

@@ -24,10 +24,9 @@ class AttendanceDetailRequest extends FormRequest
     public function rules()
     {
         return [
-            'start_time' => 'required|before:end_time',
-            'end_time' => 'required',
+            'end_time' => 'after:start_time',
             'rest_start.*' => 'nullable|after:start_time|after:end_time',
-            'rest_end.*' => 'nullable|after:rest_start.*|after:end_time',
+            'rest_end.*' => 'nullable|after:rest_start.*|before:end_time',
             'remarks_column' => 'required',
         ];
     }
@@ -35,10 +34,10 @@ class AttendanceDetailRequest extends FormRequest
     public function messages()
     {
         return [
-            'start_time.before' => '出勤時間もしくは退勤時間が不適切な値です',
+            'end_time.after' => '出勤時間もしくは退勤時間が不適切な値です',
             'rest_start.*.after' => '休憩時間が不適切な値です',
             'rest_end.*.after' => '休憩時間が不適切な値です',
-            'rest_end.*.after' => '休憩時間もしくは退勤時間が不適切な値です',
+            'rest_end.*.before' => '休憩時間もしくは退勤時間が不適切な値です',
             'remarks_column.required' => '備考を記入してください',
         ];
     }
