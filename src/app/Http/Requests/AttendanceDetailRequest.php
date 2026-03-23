@@ -25,7 +25,7 @@ class AttendanceDetailRequest extends FormRequest
     {
         return [
             'end_time' => 'after:start_time',
-            'rest_start.*' => 'nullable|after:start_time|after:end_time',
+            'rest_start.*' => 'nullable|after:start_time|before:end_time',
             'rest_end.*' => 'nullable|after:rest_start.*|before:end_time',
             'remarks_column' => 'required',
         ];

@@ -39,9 +39,9 @@
                         <th class="list-form__label">出勤・退勤</th>
                         <td class="list-form__data">
                             <div class="list-form__data-container">
-                                <input type="time" name="start_time" class="form-control" value="{{ old('start_time', $start_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                <input type="time" name="start_time" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('start_time', $start_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
                                 <span class="separator">～</span>
-                                <input type="time" name="end_time" class="form-control" value="{{ old('end_time', $end_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                <input type="time" name="end_time" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('end_time', $end_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
                                 @error('start_time')
                                     <p class="error_message">{{ $message }}</p>
                                 @enderror
@@ -52,24 +52,27 @@
                         </td>
                     </tr>
                     @foreach($rests as $index => $rest)
-                        <tr class="list-form__row">
-                            <th class="list-form__label">
-                                休憩{{ $index == 0 ? '': $index + 1 }}
-                            </th>
-                            <td class="list-form__data">
-                                <div class="list-form__data-container">
-                                    <input type="time" name="rest_start[]" class="form-control" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
-                                    <span class="separator">～</span>
-                                    <input type="time" name="rest_end[]" class="form-control" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
-                                    @error('rest_start.'.$index)
-                                        <p class="error_message">{{ $message }}</p>
-                                    @enderror
-                                    @error('rest_end.'.$index)
-                                        <p class="error_message">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </td>
-                        </tr>
+                        {{-- 承認待ちの時は、値がある行のみ表示 --}}
+                        @if(!isset($correction) || !empty($rest['start']))
+                            <tr class="list-form__row">
+                                <th class="list-form__label">
+                                    休憩{{ $index == 0 ? '': $index + 1 }}
+                                </th>
+                                <td class="list-form__data">
+                                    <div class="list-form__data-container">
+                                        <input type="time" name="rest_start[]" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                        <span class="separator">～</span>
+                                        <input type="time" name="rest_end[]" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                        @error('rest_start.'.$index)
+                                            <p class="error_message">{{ $message }}</p>
+                                        @enderror
+                                        @error('rest_end.'.$index)
+                                            <p class="error_message">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                     <tr class="list-form__row">
                         <th class="list-form__label">備考</th>

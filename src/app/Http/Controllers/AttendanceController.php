@@ -184,7 +184,7 @@ class AttendanceController extends Controller
 
         CorrectionRequest::create([
             'attendance_id' => $request->attendance_id,
-            'user_id'       => $request->user_id,
+            'user_id'       => $userId,
             'start_time'    => $request->start_time,
             'end_time'      => $request->end_time,
 
