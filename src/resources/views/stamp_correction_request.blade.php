@@ -14,8 +14,8 @@
         </div>
         <div class="list-inner">
             <div class="tab-items">
-                <a href="/mypage?page=sell" class="tab-item">承認待ち</a>
-                <a href="/mypage?page=buy" class="tab-item">承認済み</a>
+                <a href="/stamp_correction_request/list?pendingRequests" class="tab-item">承認待ち</a>
+                <a href="/stamp_correction_request/list?approveRequests" class="tab-item">承認済み</a>
             </div>
             <table class="list-form__table">
                 <thead>
@@ -30,15 +30,15 @@
                 </thead>
                 <tbody>
                         <tr class="list-form__row">
-                            {{-- 日付 --}}
+                            {{-- 状態 --}}
+                            <td class="list-form__data">{{ $status }}</td>
+                            {{-- 名前 --}}
                             <td class="list-form__data"></td>
-                            {{-- 出勤 --}}
+                            {{-- 対象日時 --}}
                             <td class="list-form__data"></td>
-                            {{-- 退勤 --}}
+                            {{-- 申請理由 --}}
                             <td class="list-form__data"></td>
-                            {{-- 休憩合計時間 --}}
-                            <td class="list-form__data"></td>
-                            {{-- 勤務時間 --}}
+                            {{-- 申請日時 --}}
                             <td class="list-form__data"></td>
                             <td class="list-form__data">
                                 <a href="/attendance/detail" class="detail-link">詳細</a>

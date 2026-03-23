@@ -21,6 +21,7 @@ class CreateCorrectionRequestsTable extends Migration
             $table->string('end_time')->nullable();
             $table->string('rest_start')->nullable();
             $table->string('rest_end')->nullable();
+            $table->integer('status')->default(0); // 0:承認待ち、1:承認済み
             $table->timestamps();
         });
     }
