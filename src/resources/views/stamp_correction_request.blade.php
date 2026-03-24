@@ -14,8 +14,8 @@
         </div>
         <div class="list-inner">
             <div class="tab-items">
-                <a href="/stamp_correction_request/list?pendingRequests" class="tab-item">承認待ち</a>
-                <a href="/stamp_correction_request/list?approveRequests" class="tab-item">承認済み</a>
+                <a href="/stamp_correction_request/list?page=pending" class="tab-item {{ $page == 'pending' ? 'active' : '' }}">承認待ち</a>
+                <a href="/stamp_correction_request/list?page=approve" class="tab-item {{ $page == 'approve' ? 'active' : '' }}">承認済み</a>
             </div>
             <table class="list-form__table">
                 <thead>
@@ -29,21 +29,44 @@
                     </tr>
                 </thead>
                 <tbody>
-                        <tr class="list-form__row">
-                            {{-- 状態 --}}
-                            <td class="list-form__data">{{ $status }}</td>
-                            {{-- 名前 --}}
-                            <td class="list-form__data"></td>
-                            {{-- 対象日時 --}}
-                            <td class="list-form__data"></td>
-                            {{-- 申請理由 --}}
-                            <td class="list-form__data"></td>
-                            {{-- 申請日時 --}}
-                            <td class="list-form__data"></td>
-                            <td class="list-form__data">
-                                <a href="/attendance/detail" class="detail-link">詳細</a>
-                            </td>
-                        </tr>
+                    @if($page == 'pending')
+                        @foreach($pendingRequests as $request)
+                            <tr class="list-form__row">
+                                {{-- 状態 --}}
+                                <td class="list-form__data">承認待ち</td>
+                                {{-- 名前 --}}
+                                <td class="list-form__data">{{ $request->user->name }}</td>
+                                {{-- 対象日時 --}}
+                                <td class="list-form__data">{{ $request->attendance?->created_at?->format('Y/m/d') ?? '' }}</td>
+                                {{-- 申請理由 --}}
+                                <td class="list-form__data">{{ $request->remarks ?? '' }}</td>
+                                {{-- 申請日時 --}}
+                                <td class="list-form__data">{{ $request->created_at->format('Y/m/d') }}</td>
+                                <td class="list-form__data">
+                                    <a href="/attendance/detail" class="detail-link">詳細</a>
+                                </td>
+                            </tr>
+                        @endforeach
+
+                    @else
+                        @foreach($approveRequests as $request)
+                            <tr class="list-form__row">
+                                {{-- 状態 --}}
+                                <td class="list-form__data">承認済み</td>
+                                {{-- 名前 --}}
+                                <td class="list-form__data">{{ $request->user->name }}</td>
+                                {{-- 対象日時 --}}
+                                <td class="list-form__data">{{ $request->attendance?->created_at?->format('Y/m/d') ?? '' }}</td>
+                                {{-- 申請理由 --}}
+                                <td class="list-form__data">{{ $request->remarks ?? '' }}</td>
+                                {{-- 申請日時 --}}
+                                <td class="list-form__data">{{ $request->created_at->format('Y/m/d') }}</td>
+                                <td class="list-form__data">
+                                    <a href="/attendance/detail" class="detail-link">詳細</a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>

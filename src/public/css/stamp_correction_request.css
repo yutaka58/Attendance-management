@@ -12,9 +12,10 @@ h2 {
 
 .tab-items {
     display: flex;
-    padding: 0 0 10px 30px;
+    padding: 0 0 10px 20px;
     margin-top: 40px;
     border-bottom: 1px solid #000;
+    gap: 50px;
 }
 
 .tab-item {
@@ -24,10 +25,9 @@ h2 {
     border: none;
     background: none;
     cursor: pointer;
-    gap: 50px;
 }
 
-.tab-item.action {
+.tab-item.active {
     font-weight: bold;
 }
 

@@ -150,17 +150,30 @@ class AttendanceController extends Controller
         $rests_start = Attendance::where('user_id', $userId)->where('work_action_id', 3)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
         $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
         // 休憩のペアを作成
-        $rests = [];
-        foreach($rests_start as $index => $start) {
-            $rests[] = [
-                'start' => $start->created_at->format('H:i'),
-                'end' => isset($rests_end[$index]) ? $rests_end[$index]->created_at->format('H:i'): null
-            ];
-        }
 
         $correction = null;
         if ($attendance) {
             $correction = CorrectionRequest::where('user_id', $userId)->where('attendance_id', $attendance->id)->latest()->first();
+        }
+
+        $rests = [];
+        if($correction) {
+            // 修正の申請があった場合、申請データを表示用に更新
+            $c_starts = json_decode($correction->rest_start, true) ?? [];
+            $c_ends = json_decode($correction->rest_end, true) ?? [];
+                foreach($c_starts as $index => $val) {
+                    if(!empty($val)) {
+                        $rests[] = ['start' => $val, 'end' => $c_ends[$index] ?? ''];
+                    }
+                }
+        } else {
+            // 申請がなかった場合、元のデータを表示
+            foreach($rests_start as $index => $start) {
+                $rests[] = [
+                    'start' => $start->created_at->format('H:i'),
+                    'end' => isset($rests_end[$index]) ? $rests_end[$index]->created_at->format('H:i'): null
+                ];
+            }
         }
 
         // 表示用の変数
@@ -182,14 +195,21 @@ class AttendanceController extends Controller
     {
         $userId = auth()->id();
 
+        // 空の休憩時間を除外して保存
+        $rest_starts = array_filter($request->rest_start);
+        $rest_ends = array_filter($request->rest_end);
+
         CorrectionRequest::create([
             'attendance_id' => $request->attendance_id,
-            'user_id'       => $userId,
-            'start_time'    => $request->start_time,
-            'end_time'      => $request->end_time,
+            'user_id' => $userId,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
 
-            'rest_start'    => is_array($request->rest_start) ? json_encode($request->rest_start) : $request->rest_start,
-            'rest_end'      => is_array($request->rest_end) ? json_encode($request->rest_end) : $request->rest_end,
+            'rest_start' => is_array($request->rest_start) ? json_encode($request->rest_start) : $request->rest_start,
+            'rest_end' => is_array($request->rest_end) ? json_encode($request->rest_end) : $request->rest_end,
+
+            'status' => 0,
+            'remarks' => $request->remarks_column,
         ]);
 
     return redirect()->back()->with('message', '*承認待ちのため修正はできません。');

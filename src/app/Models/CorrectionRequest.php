@@ -20,15 +20,16 @@ class CorrectionRequest extends Model
         'end_time',
         'rest_start',
         'rest_end',
+        'remarks',
     ];
 
     public function attendance()
     {
-        return $this->belongsTo(Attendance::class);
+        return $this->belongsTo(Attendance::class, 'attendance_id');
     }
 
-    public function users()
+    public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
