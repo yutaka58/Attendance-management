@@ -75,6 +75,10 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffDetail']);
 
     // 申請一覧画面
-    // Route::get('/stamp_correction_request/list'. [AdminStampCorrectionController::class, 'admin_correction_request']);
+    Route::get('/admin/stamp_correction_request/list', [AdminStampCorrectionController::class, 'adminCorrection']);
+
+    // 修正申請承認画面
+    Route::get('/admin/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminStampCorrectionController::class, 'showApprove']);
+    Route::post('/admin/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminStampCorrectionController::class, 'approveUpdate']);
 });
 

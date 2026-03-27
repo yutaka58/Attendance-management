@@ -44,7 +44,7 @@
                             {{-- 勤務時間 --}}
                             <td class="list-form__data"></td>
                             <td class="list-form__data">
-                                <a href="/admin/attendance{id}" class="detail-link">詳細</a>
+                                <a href="admin/attendance/{id}" class="detail-link">詳細</a>
                             </td>
                         </tr>
                 </tbody>
