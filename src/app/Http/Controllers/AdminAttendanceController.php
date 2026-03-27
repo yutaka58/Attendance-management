@@ -12,35 +12,19 @@ class AdminAttendanceController extends Controller
 {
         public function showAttendanceList(Request $request)
     {
-        // パラーメータがなければ今月を取得
-        $monthParam = $request->query('month', Carbon::now()->format('Y-m'));
-        $currentMonth = Carbon::now();
+        // 1. パラメータがなければ今日、あればその日を取得
+        $dateParam = $request->query('date', Carbon::now()->format('Y-m-d'));
+        $currentDay = Carbon::parse($dateParam);
 
-        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
-        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
+        $prevDay = $currentDay->copy()->subDay()->format('Y-m-d');
+        $nextDay = $currentDay->copy()->addDay()->format('Y-m-d');
 
-        $user = auth()->user();
-        // ユーザーの打刻データを取得し、日付ごとにグループ化する
+        $startOfDay = $currentDay->copy()->startOfDay();
+        $endOfDay = $currentDay->copy()->endOfDay();
 
-        $startOfMonth = $currentMonth->copy()->startOfMonth();
-        $endOfMonth = $currentMonth->copy()->endOfMonth();
+        $attendances = Attendance::whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get()->groupBy('user_id');
 
-        $tempDay = $startOfMonth->copy();
-
-        $allDays = [];
-        $timeDay = $startOfMonth->copy();
-        while($tempDay->lte($endOfMonth)) {
-            $allDays[$tempDay->format('Y-m-d')] = collect();
-            $tempDay->addDay();
-        }
-
-        $dbAttendances = Attendance::where('user_id', $user->id)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
-            return $item->created_at->format('Y-m-d');
-        });
-
-        $attendances = collect($allDays)->merge($dbAttendances);
-
-        return view('admin_attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances', 'tempDay'));
+        return view('admin_attendance_list', compact('currentDay', 'prevDay', 'nextDay', 'attendances'));
     }
 
     public function adminDetail()

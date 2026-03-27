@@ -21,6 +21,7 @@ class CorrectionRequest extends Model
         'rest_start',
         'rest_end',
         'remarks',
+        'status',
     ];
 
     public function attendance()

@@ -10,15 +10,15 @@
 <div class="list-form">
     <div class="list-form__grid">
         <div class="list-form__heading">
-            <h2 class="list-form__title">{{ $currentMonth->format('Y年n月j日') }}の勤怠</h2>
+            <h2 class="list-form__title">{{ $currentDay->format('Y年n月j日') }}の勤怠</h2>
         </div>
         <div class="list-inner">
             <div class="list-calender">
-                <a href="?month={{ $prevMonth }}" class="calender_btn">前月</a>
-                <span class="current-month">
-                    <i class="fa-solid fa-calendar-days"></i> {{ $currentMonth->format('Y/m/d') }}
+                <a href="?date={{ $prevDay }}" class="calender_btn">← 前日</a>
+                <span class="current-day">
+                    <i class="fa-solid fa-calendar-days"></i> {{ $currentDay->format('Y/m/d') }}
                 </span>
-                <a href="?month={{ $nextMonth }}" class="calender_btn">翌月</a>
+                <a href="?date={{ $nextDay }}" class="calender_btn">翌日 →</a>
             </div>
             <table class="list-form__table">
                 <thead>

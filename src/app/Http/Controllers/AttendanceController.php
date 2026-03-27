@@ -132,9 +132,9 @@ class AttendanceController extends Controller
         return view('attendance_list', compact('monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances', 'tempDay'));
     }
 
-    public function attendanceDetail($date)
+    public function attendanceDetail($id)
     {
-        $targetDate = Carbon::parse($date);
+        $targetDate = Carbon::parse($id);
 
         $startOfDay = $targetDate->copy()->startOfDay();
         $endOfDay = $targetDate->copy()->endOfDay();

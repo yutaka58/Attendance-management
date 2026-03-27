@@ -46,9 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'attendanceList']);
 
     // 勤怠詳細画面
-    Route::get('/attendance/detail/{date}', [AttendanceController::class, 'attendanceDetail']);
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'attendanceDetail']);
     // 勤怠詳細画面　修正依頼
-    Route::post('/attendance/detail', [AttendanceController::class, 'timeCorrection']);
+    Route::post('/attendance/detail/{id}', [AttendanceController::class, 'timeCorrection']);
 
     // 申請一覧画面
     Route::get('/stamp_correction_request/list', [StampCorrectionController::class, 'correctionRequest']);

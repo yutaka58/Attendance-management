@@ -125,3 +125,12 @@ h2 {
 .separator {
     flex-shrink: 0;
 }
+
+.btn-disabled {
+    color: #fff;
+    background-color: gray;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 5px;
+}

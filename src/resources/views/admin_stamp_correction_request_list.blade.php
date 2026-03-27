@@ -14,8 +14,8 @@
         </div>
         <div class="list-inner">
             <div class="tab-items">
-                <a href="/stamp_correction_request/list?page=pending" class="tab-item {{ $page == 'pending' ? 'active' : '' }}">承認待ち</a>
-                <a href="/stamp_correction_request/list?page=approve" class="tab-item {{ $page == 'approve' ? 'active' : '' }}">承認済み</a>
+                <a href="/admin/stamp_correction_request/list?page=pending" class="tab-item {{ $page == 'pending' ? 'active' : '' }}">承認待ち</a>
+                <a href="/admin/stamp_correction_request/list?page=approve" class="tab-item {{ $page == 'approve' ? 'active' : '' }}">承認済み</a>
             </div>
             <table class="list-form__table">
                 <thead>

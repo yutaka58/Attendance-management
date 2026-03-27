@@ -31,7 +31,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($attendances as $date => $group)
+                    @foreach($attendances as $id => $group)
                         @php
                             // 1. 出勤・退勤データを取得
                             $clockIn = $group->where('work_action_id', 1)->first(); // 出勤
@@ -77,7 +77,7 @@
 
                         <tr class="list-form__row">
                             {{-- 日付 --}}
-                            <td class="list-form__data">{{ Carbon\Carbon::parse($date)->isoFormat('MM/DD(ddd)') }}</td>
+                            <td class="list-form__data">{{ Carbon\Carbon::parse($id)->isoFormat('MM/DD(ddd)') }}</td>
                             {{-- 出勤 --}}
                             <td class="list-form__data">{{ $clockIn ? $clockIn->created_at->format('H:i'): null }}</td>
                             {{-- 退勤 --}}
@@ -87,7 +87,7 @@
                             {{-- 勤務時間 --}}
                             <td class="list-form__data">{{ ($clockIn && $clockOut) ? $workTimeDisplay : '' }}</td>
                             <td class="list-form__data">
-                                <a href="/attendance/detail/{{ $date }}" class="detail-link">詳細</a>
+                                <a href="/attendance/detail/{{ $id }}" class="detail-link">詳細</a>
                             </td>
                         </tr>
                     @endforeach

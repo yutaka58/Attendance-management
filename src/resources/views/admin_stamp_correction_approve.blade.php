@@ -67,10 +67,14 @@
                 </tr>
             </table>
             <div class="correction-btn">
-                <form action="/stamp_correction_request/list" method="post">
-                    @csrf
-                    <button type="submit" name="correction" class="correction">承認</button>
-                </form>
+                @if($correction->status == 1)
+                    <span class="btn-submit btn-disabled">承認済み</span>
+                @else
+                    <form action="/admin/stamp_correction_request/approve/{{ $correction->id }}" method="post">
+                        @csrf
+                            <button type="submit" name="correction" class="correction">承認</button>
+                    </form>
+                @endif
             </div>
         </div>
     </div>

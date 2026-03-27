@@ -12,7 +12,7 @@
             <h2 class="list-form__title">勤怠詳細</h2>
         </div>
 
-        <form action="/attendance/detail" method="post">
+        <form action="/attendance/detail/{id}" method="post">
             @csrf
 
             <input type="hidden" name="attendance_id" value="{{ $attendance->id ?? '' }}">

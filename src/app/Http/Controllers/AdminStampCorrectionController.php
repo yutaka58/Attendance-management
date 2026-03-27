@@ -46,7 +46,7 @@ class AdminStampCorrectionController extends Controller
                     $rests[] = ['start' => $val, 'end' => $c_ends[$index] ?? ''];
                 }
             }
-            
+
         // ★ 常に空の休憩枠を1つ追加する
         $rests[] = ['start' => '', 'end' => ''];
 
@@ -59,10 +59,24 @@ class AdminStampCorrectionController extends Controller
 
     public function approveUpdate(Request $request, $attendance_correct_request_id)
     {
+        // 1. 修正申請データを取得
         $correction = CorrectionRequest::findOrFail($attendance_correct_request_id);
 
-        $correction->update(['status'=> 1]);
+        // 2. 紐づく勤怠データを取得
+        $attendance = $correction->attendance;
+            
+        if ($attendance) {
+            $attendance->update ([
+                'start_time' => $correction->start_time,
+                'end_time' => $correction->end_time,
+                'rest_start' => $correction->rest_start,
+                'rest_end' => $correction->rest_end,
+            ]);
+        }
 
-        return redirect('/admin/stamp_correction_request/list');
+        $correction->update(['status'=> 1]);
+        $correction->save();
+
+        return redirect()->back();
     }
 }
