@@ -65,9 +65,9 @@ Route::middleware(['auth:admin'])->group(function () {
 
     // 勤怠一覧画面
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'showAttendanceList']);
-
     // 勤怠詳細画面
     Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'adminDetail']);
+    Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'updateAttendance']);
 
     // スタッフ一覧画面
     Route::get('/admin/staff/list', [AdminAttendanceController::class, 'staffList']);

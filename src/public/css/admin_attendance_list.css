@@ -32,6 +32,18 @@ h2 {
     margin-right: 20px;
 }
 
+.current-day {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+#date-picker {
+    width: 20px;
+    transform: scale(2);
+    border: none;
+    background: transparent;
+}
+
 .list-calender {
     width: 100%;
     border-radius: 5px;
@@ -76,7 +88,7 @@ h2 {
 }
 
 .list-form__table td:nth-child(1) {
-    padding-left: 50px;
+    padding-left: 20px;
 }
 
 .calender-btn {
@@ -84,10 +96,4 @@ h2 {
     color: #333;
     padding: 5px 15px;
     margin: 0 15px;
-}
-
-.current-day {
-    font-weight: bold;
-    font-size: 1.2em;
-    margin: 0 20px;
 }

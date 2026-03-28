@@ -15,7 +15,9 @@
             <div class="list-calender">
                 <a href="?month={{ $prevMonth }}" class="calender_btn">← 前月</a>
                 <span class="current-month">
-                    <i class="fa-solid fa-calendar-days"></i> {{ $currentMonth->format('Y/m') }}
+                    <input type="date" id="date-picker" value="{{ $currentMonth->format('Y-m-d') }}" onchange="location.href='?date=' + this.value">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <span>{{ $currentMonth->format('Y/m') }}</span>
                 </span>
                 <a href="?month={{ $nextMonth }}" class="calender_btn">翌月 →</a>
             </div>
