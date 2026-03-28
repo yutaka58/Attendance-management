@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\AttendanceDetailRequest;
 
 use App\Models\Attendance;
 use App\Models\User;
@@ -90,9 +91,93 @@ class AdminAttendanceController extends Controller
         return view('admin_attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction', 'currentDay', 'userId', 'user'));
     }
 
+    public function updateAttendance(AttendanceDetailRequest $request, $id)
+    {
+        $userId = $request->input('user_id');
+        $date = $id;
+        $user = User::find($userId);
+
+        $rest_starts = $request->rest_start ?? [];
+        $rest_ends = $request->rest_end ?? [];
+
+        // --- 1. 休憩の前後関係バリデーション (先にやる) ---
+        foreach ($rest_starts as $index => $start) {
+            $end = $rest_ends[$index] ?? null;
+            if (!empty($start) && !empty($end)) {
+                if (strtotime($start) >= strtotime($end)) {
+                    return back()->withErrors([
+                        "rest_end.{$index}" => '休憩終了時間は開始時間より後にしてください'
+                    ])->withInput();
+                }
+            }
+        }
+
+        // --- 2. 出勤・退勤の更新用データを定義 ---
+        $actions = [
+            1 => $request->start_time, // 出勤
+            2 => $request->end_time,   // 退勤
+        ];
+
+        // --- 3. 出勤・退勤の実行 ---
+        foreach ($actions as $actionId => $time) {
+            if ($time) {
+                $newDateTime = Carbon::parse($date . ' ' . $time);
+
+                // 既存レコードを検索
+                $record = Attendance::where('user_id', $userId)
+                    ->where('work_action_id', $actionId)
+                    ->whereDate('created_at', $date)
+                    ->first();
+
+                if ($record) {
+                    $record->update([
+                        'created_at' => $newDateTime,
+                        'user_name' => $user->name,
+                    ]);
+                } else {
+                    Attendance::create([
+                        'user_id' => $userId,
+                        'user_name' => $user->name,
+                        'work_action_id' => $actionId,
+                        'created_at' => $newDateTime,
+                    ]);
+                }
+            }
+        }
+
+        // --- 4. 休憩時間の更新（一度消して作り直す） ---
+        Attendance::where('user_id', $userId)
+            ->whereIn('work_action_id', [3, 4])
+            ->whereDate('created_at', $date)
+            ->delete();
+
+        $valid_rest_starts = array_filter($rest_starts);
+        foreach ($valid_rest_starts as $index => $start) {
+            Attendance::create([
+                'user_id' => $userId,
+                'user_name' => $user->name,
+                'work_action_id' => 3,
+                'created_at' => Carbon::parse($date . ' ' . $start),
+            ]);
+            if (!empty($rest_ends[$index])) {
+                Attendance::create([
+                    'user_id' => $userId,
+                    'user_name' => $user->name,
+                    'work_action_id' => 4,
+                    'created_at' => Carbon::parse($date . ' ' . $rest_ends[$index]),
+                ]);
+            }
+        }
+
+        // --- 5. リダイレクト ---
+        return redirect("/admin/attendance/staff/{$userId}");
+    }
+
     public function staffList()
     {
-        return view('admin_staff_list');
+        $users = User::all();
+
+        return view('admin_staff_list', compact('users'));
     }
 
     public function staffDetail()

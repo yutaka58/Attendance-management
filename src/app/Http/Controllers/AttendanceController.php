@@ -59,7 +59,7 @@ class AttendanceController extends Controller
         $dt = Carbon::today()->isoFormat('YYYY年M月D日(ddd)');
         $time = Carbon::now()->format('H:i');
 
-        return view('/attendance', compact('work_status', 'dt', 'time', 'work_actions', 'display_actions', 'alreadyCheckedIn'));
+        return view('attendance', compact('work_status', 'dt', 'time', 'work_actions', 'display_actions', 'alreadyCheckedIn'));
     }
 
     public function storeAttendance(Request $request)

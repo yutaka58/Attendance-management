@@ -13,6 +13,7 @@ class Attendance extends Model
         'user_name',
         'user_id',
         'work_action_id',
+        'created_at',
     ];
 
     public function user()

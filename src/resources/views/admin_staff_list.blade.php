@@ -22,15 +22,17 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($users as $user)
                         <tr class="list-form__row">
                             {{-- 名前 --}}
-                            <td class="list-form__data"></td>
+                            <td class="list-form__data">{{ $user->name }}</td>
                             {{-- メールアドレス --}}
-                            <td class="list-form__data"></td>
+                            <td class="list-form__data">{{ $user->email }}</td>
                             <td class="list-form__data">
-                                <a href="/admin/attendance{id}" class="detail-link">詳細</a>
+                                <a href="/admin/attendance{{ $user->id }}" class="detail-link">詳細</a>
                             </td>
                         </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
