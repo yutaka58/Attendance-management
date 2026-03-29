@@ -29,7 +29,7 @@
                             {{-- メールアドレス --}}
                             <td class="list-form__data">{{ $user->email }}</td>
                             <td class="list-form__data">
-                                <a href="/admin/attendance{{ $user->id }}" class="detail-link">詳細</a>
+                                <a href="/admin/attendance/staff/{{ $user->id }}" class="detail-link">詳細</a>
                             </td>
                         </tr>
                     @endforeach

@@ -180,8 +180,36 @@ class AdminAttendanceController extends Controller
         return view('admin_staff_list', compact('users'));
     }
 
-    public function staffDetail()
+    public function staffAttendanceList(Request $request, $id)
     {
-        return view('admin_attendance_staff');
+        // パラーメータがなければ今月を取得
+        $monthParam = $request->query('month', Carbon::now()->format('Y-m'));
+        $currentMonth = Carbon::parse($monthParam);
+
+        $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
+
+        $user = User::find($id);
+
+        // ユーザーの打刻データを取得し、日付ごとにグループ化する
+        $startOfMonth = $currentMonth->copy()->startOfMonth();
+        $endOfMonth = $currentMonth->copy()->endOfMonth();
+
+        $tempDay = $startOfMonth->copy();
+
+        $allDays = [];
+        $timeDay = $startOfMonth->copy();
+        while($tempDay->lte($endOfMonth)) {
+            $allDays[$tempDay->format('Y-m-d')] = collect();
+            $tempDay->addDay();
+        }
+
+        $dbAttendances = Attendance::where('user_id', $user->id)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->orderBy('created_at', 'asc')->get()->groupBy(function($item) {
+            return $item->created_at->format('Y-m-d');
+        });
+
+        $attendances = collect($allDays)->merge($dbAttendances);
+
+        return view('admin_attendance_staff', compact('user', 'monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances', 'tempDay'));
     }
 }

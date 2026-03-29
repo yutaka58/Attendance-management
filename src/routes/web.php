@@ -72,7 +72,7 @@ Route::middleware(['auth:admin'])->group(function () {
     // スタッフ一覧画面
     Route::get('/admin/staff/list', [AdminAttendanceController::class, 'staffList']);
     // スタッフ別勤怠一覧画面
-    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffDetail']);
+    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffAttendanceList']);
 
     // 申請一覧画面
     Route::get('/admin/stamp_correction_request/list', [AdminStampCorrectionController::class, 'adminCorrection']);
