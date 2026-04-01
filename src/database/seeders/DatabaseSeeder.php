@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AdminUserTableSeeder::class,
             WorkStatusTableSeeder::class,
             WorkActionTableSeeder::class,
+            UserTableSeeder::class,
         ]);
     }
 }

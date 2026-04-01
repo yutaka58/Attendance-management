@@ -100,9 +100,11 @@ h2 {
     display: block;
     width: 100%;
     min-height: 80px;
-    padding: 10px;
     background-color: #fff;
     text-align: left;
+    font-weight: bold;
+    padding-top: 20px;
+    padding-left: 40px;
 }
 
 .correction-btn {
@@ -120,7 +122,6 @@ h2 {
     cursor: pointer;
 }
 
-/* フォームとセパレーターが横に並ぶように維持 */
 .form-control,
 .separator {
     flex-shrink: 0;

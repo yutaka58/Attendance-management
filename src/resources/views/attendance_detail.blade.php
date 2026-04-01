@@ -39,9 +39,9 @@
                         <th class="list-form__label">出勤・退勤</th>
                         <td class="list-form__data">
                             <div class="list-form__data-container">
-                                <input type="time" name="start_time" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('start_time', $start_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                <input type="time" name="start_time" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('start_time', $start_time) }}"{{ ($correction || $isApproved) ? 'readonly-input' : '' }}>
                                 <span class="separator">～</span>
-                                <input type="time" name="end_time" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('end_time', $end_time) }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                <input type="time" name="end_time" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('end_time', $end_time) }}" {{ ($correction || $isApproved) ? 'readonly-input' : '' }}>
                                 @error('start_time')
                                     <p class="error_message">{{ $message }}</p>
                                 @enderror
@@ -60,9 +60,9 @@
                                 </th>
                                 <td class="list-form__data">
                                     <div class="list-form__data-container">
-                                        <input type="time" name="rest_start[]" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                        <input type="time" name="rest_start[]" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ ($correction || $isApproved) ? 'readonly-input' : '' }}></input>
                                         <span class="separator">～</span>
-                                        <input type="time" name="rest_end[]" class="form-control {{ isset($correction) ? 'readonly-input' : '' }}" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ isset($correction) ? 'readonly' : '' }}></input>
+                                        <input type="time" name="rest_end[]" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ ($correction || $isApproved) ? 'readonly-input' : '' }}></input>
                                         @error('rest_start.'.$index)
                                             <p class="error_message">{{ $message }}</p>
                                         @enderror
@@ -78,7 +78,19 @@
                         <th class="list-form__label">備考</th>
                         <td class="list-form__data">
                             <div class="list-form__remarks-container">
-                                <input type="text" name="remarks_column" class="remarks-column" value="{{ old('remarks_column', $correction->remarks ?? '') }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                @if($correction || $isApproved)
+                                    {{-- 承認待ち・承認済みの場合はテキストのみ表示（枠線なし） --}}
+                                    <span class="remarks-text" style="display: inline-block; padding: 50px 0;">
+                                        {{ old('remarks_column', $correction->remarks ?? ($attendance->remarks ?? '')) }}
+                                    </span>
+                                    {{-- フォーム送信が必要な場合は hidden で値を保持 --}}
+                                    <input type="hidden" name="remarks_column" value="{{ old('remarks_column', $correction->remarks ?? '') }}">
+                                @else
+                                    {{-- 通常時は入力枠を表示 --}}
+                                    <input type="text" name="remarks_column" class="remarks-column" 
+                                        value="{{ old('remarks_column', $correction->remarks ?? '') }}">
+                                @endif
+
                                 @error('remarks_column')
                                     <p class="error_message">{{ $message }}</p>
                                 @enderror
@@ -87,12 +99,20 @@
                     </tr>
                 </table>
                 <div class="correction-btn">
-                    @if(!isset($correction))
-                        <button type="submit" name="correction" class="correction">修正</button>
-                    @else
+                    @if($isApproved)
+                        {{-- 承認済みの場合：ボタンを無効化して表示 --}}
+                        <button type="button" class="correction approved" disabled
+                                style="background-color: #ccc; cursor: not-allowed; border: none;">
+                            承認済み
+                        </button>
+                    @elseif($correction)
+                        {{-- 承認待ちの場合 --}}
                         <p class="waiting-message" style="color: red; font-weight: bold;">
                             *承認待ちのため修正はできません。
                         </p>
+                    @else
+                        {{-- 申請がない、または再修正可能な場合 --}}
+                        <button type="submit" name="correction" class="correction">修正</button>
                     @endif
                 </div>
             </div>

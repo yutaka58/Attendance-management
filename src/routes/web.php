@@ -28,7 +28,6 @@ Route::get('/', function () {
 });
 
 // 一般ユーザー
-Route::get('/register', [AuthController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -78,7 +77,7 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/stamp_correction_request/list', [AdminStampCorrectionController::class, 'adminCorrection']);
 
     // 修正申請承認画面
-    Route::get('/admin/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminStampCorrectionController::class, 'showApprove']);
-    Route::post('/admin/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminStampCorrectionController::class, 'approveUpdate']);
+    Route::get('/admin/stamp_correction_request/approve/{id}', [AdminAttendanceController::class, 'showApprove']);
+    Route::post('/admin/stamp_correction_request/approve/{id}', [AdminAttendanceController::class, 'approve']);
 });
 

@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // 会員登録画面を表示させるのみ
-    public function index()
-    {
-        return view('auth.register');
-    }
-
     // 会員登録情報の保存処理
     public function register(RegisterRequest $request)
     {

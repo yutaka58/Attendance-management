@@ -42,5 +42,5 @@ class AdminUser extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $table = 'adminusers';
+    protected $table = 'admin_users';
 }

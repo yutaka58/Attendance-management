@@ -54,12 +54,6 @@ php artisan migrate
 php artisan db:seed
 ```
 
-9. シンボリックリンク作成
-
-```bash
-php artisan storage:link
-```
-
 ## 使用技術(実行環境)
 
 - PHP8.1.33
@@ -77,11 +71,5 @@ php artisan storage:link
 - MailHog (メール確認): http://localhost:8025/
 
 ## 備考
-
-1. マイページの「出品した商品」「購入した商品」に表示された
-   商品の詳細画面が開けなくとも良いことコーチと確認済み。
-
-2. 商品一覧画面、プロフィール画面にページネーション実装。
-   コーチと相談済み。
 
 # Attendance-management

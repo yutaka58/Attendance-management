@@ -138,22 +138,38 @@ class AttendanceController extends Controller
 
         $startOfDay = $targetDate->copy()->startOfDay();
         $endOfDay = $targetDate->copy()->endOfDay();
+        $nextDayEnd = $targetDate->copy()->addDay()->endOfDay();
         $userId = auth()->id();
 
         // 出勤打刻を取得
         $attendance = Attendance::where('user_id', $userId)->where('work_action_id', 1)->whereBetween('created_at', [$startOfDay, $endOfDay])->first();
 
-        // 退勤打刻を取得
-        $end_attendance = Attendance::where('user_id', $userId)->where('work_action_id', 2)->whereBetween('created_at', [$startOfDay, $endOfDay])->first();
+        // 退勤打刻を取得->where('created_at', '>', $attendance->created_at)->
+        $end_attendance = Attendance::where('user_id', $userId)->where('work_action_id', 2)->whereBetween('created_at', [$startOfDay, $nextDayEnd])->first();
 
         // 休憩入・休憩戻の打刻時間を取得
-        $rests_start = Attendance::where('user_id', $userId)->where('work_action_id', 3)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
-        $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
+        $rests_start = Attendance::where('user_id', $userId)->where('work_action_id', 3)->whereBetween('created_at', [$startOfDay, $nextDayEnd])->whereBetween('created_at', [$startOfDay, $nextDayEnd])->orderBy('created_at', 'asc')->get();
+        $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->whereBetween('created_at', [$startOfDay, $nextDayEnd])->whereBetween('created_at', [$startOfDay, $nextDayEnd])->orderBy('created_at', 'asc')->get();
         // 休憩のペアを作成
 
+        // 承認待ちの申請を取得（入力制限に使用）
         $correction = null;
+        // 承認済みの申請があるかチェック（ボタン表示の切り替えに使用）
+        $isApproved = false;
+
         if ($attendance) {
-            $correction = CorrectionRequest::where('user_id', $userId)->where('attendance_id', $attendance->id)->latest()->first();
+            $latestRequest = CorrectionRequest::where('user_id', $userId)
+                ->where('attendance_id', $attendance->id)
+                ->latest()
+                ->first();
+
+            if ($latestRequest) {
+                if ($latestRequest->status == 0) {
+                    $correction = $latestRequest; // 承認待ち
+                } elseif ($latestRequest->status == 1) {
+                    $isApproved = true; // 承認済み
+                }
+            }
         }
 
         $rests = [];
@@ -188,7 +204,7 @@ class AttendanceController extends Controller
         $start_time = $correction ? $correction->start_time : ($attendance ? $attendance->created_at->format('H:i') : '');
         $end_time = $correction ? $correction->end_time : ($end_attendance ? $end_attendance->created_at->format('H:i') : '');
 
-        return view('attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction'));
+        return view('attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction', 'isApproved'));
     }
 
     public function timeCorrection(AttendanceDetailRequest $request)
@@ -212,6 +228,6 @@ class AttendanceController extends Controller
             'remarks' => $request->remarks_column,
         ]);
 
-    return redirect()->back()->with('message', '*承認待ちのため修正はできません。');
+    return redirect()->back();
     }
 }

@@ -38,10 +38,11 @@ h2 {
 }
 
 #date-picker {
-    width: 20px;
+    width: 25px;
     transform: scale(2);
     border: none;
     background: transparent;
+    opacity: 0;
 }
 
 .list-calender {

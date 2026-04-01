@@ -43,7 +43,7 @@
                                 {{-- 申請日時 --}}
                                 <td class="list-form__data">{{ $request->created_at->format('Y/m/d') }}</td>
                                 <td class="list-form__data">
-                                    <a href="/attendance/detail/{{ $request->attendance?->created_at?->format('Y/m/d') }}" class="detail-link">詳細</a>
+                                    <a href="/attendance/detail/{{ $request->attendance?->created_at?->format('Y-m-d') }}" class="detail-link">詳細</a>
                                 </td>
                             </tr>
                         @endforeach

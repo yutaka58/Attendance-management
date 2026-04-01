@@ -140,7 +140,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     text-align: left;
 }
 
-/* フォームとセパレーターが横に並ぶように維持 */
 .form-control,
 .separator {
     flex-shrink: 0;
