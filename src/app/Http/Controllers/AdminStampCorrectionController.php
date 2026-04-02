@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Attendance;
 use App\Models\CorrectionRequest;
+
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 
@@ -64,7 +67,7 @@ class AdminStampCorrectionController extends Controller
 
         // 2. 紐づく勤怠データを取得
         $attendance = $correction->attendance;
-            
+
         if ($attendance) {
             $attendance->update ([
                 'start_time' => $correction->start_time,
@@ -77,6 +80,64 @@ class AdminStampCorrectionController extends Controller
         $correction->update(['status'=> 1]);
         $correction->save();
 
+        // 本体テーブルへの同期を実行
+        $this->syncAttendanceData($correction);
+
         return redirect()->back();
+    }
+
+    private function syncAttendanceData($correction)
+    {
+        $attendanceId = $correction->attendance_id;
+        $userId = $correction->user_id;
+        $user = User::find($userId);
+
+        // 1. 元の出勤レコードを取得
+        $baseAttendance = Attendance::find($attendanceId);
+        if (!$baseAttendance) return;
+
+        // 元の「日」を保持（検索用）
+        $originalDate = $baseAttendance->created_at->format('Y-m-d');
+
+        // 2. 出勤時間の更新
+        $baseAttendance->update([
+            'created_at' => Carbon::parse($originalDate . ' ' . $correction->start_time),
+        ]);
+    
+        // 3. 退勤時間の更新（「同じ日の退勤アクション」を確実に特定）
+        Attendance::where('user_id', $userId)
+            ->where('work_action_id', 2)
+            ->whereDate('created_at', $originalDate) // 修正前の日付で検索
+            ->update([
+                'created_at' => Carbon::parse($originalDate . ' ' . $correction->end_time),
+            ]);
+
+        // 4. 休憩時間の再構築（一旦削除して作り直し）
+        Attendance::where('user_id', $userId)
+            ->whereIn('work_action_id', [3, 4])
+            ->whereDate('created_at', $originalDate)
+            ->delete();
+
+        $rest_starts = json_decode($correction->rest_start, true) ?? [];
+        $rest_ends = json_decode($correction->rest_end, true) ?? [];
+
+        foreach ($rest_starts as $index => $start) {
+            if (!empty($start)) {
+                Attendance::create([
+                    'user_id' => $userId,
+                    'user_name' => $user->name,
+                    'work_action_id' => 3,
+                    'created_at' => Carbon::parse($originalDate . ' ' . $start),
+                ]);
+                if (!empty($rest_ends[$index])) {
+                    Attendance::create([
+                        'user_id' => $userId,
+                        'user_name' => $user->name,
+                        'work_action_id' => 4,
+                        'created_at' => Carbon::parse($originalDate . ' ' . $rest_ends[$index]),
+                    ]);
+                }
+            }
+        }
     }
 }

@@ -160,12 +160,15 @@ class AttendanceController extends Controller
         if ($attendance) {
             $latestRequest = CorrectionRequest::where('user_id', $userId)
                 ->where('attendance_id', $attendance->id)
+                ->whereIn('status', [0, 1])
                 ->latest()
                 ->first();
 
             if ($latestRequest) {
+                $correction = $latestRequest; // 承認待ち
+
                 if ($latestRequest->status == 0) {
-                    $correction = $latestRequest; // 承認待ち
+
                 } elseif ($latestRequest->status == 1) {
                     $isApproved = true; // 承認済み
                 }
@@ -197,8 +200,10 @@ class AttendanceController extends Controller
         $month = $targetDate->format('n');
         $day = $targetDate->format('j');
 
-        // ★ 常に空の休憩枠を1つ追加する
-        $rests[] = ['start' => '', 'end' => ''];
+        // 承認済み、承認待ちの場合は、空枠を表示しない
+        if (!$correction && !$isApprove) {
+            $rests[] = ['rest' => '', 'end' => ''];
+        }
 
         // 申請があればそれを優先、なければ元の打刻。どちらもなければ null
         $start_time = $correction ? $correction->start_time : ($attendance ? $attendance->created_at->format('H:i') : '');

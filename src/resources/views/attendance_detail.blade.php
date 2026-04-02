@@ -53,16 +53,16 @@
                     </tr>
                     @foreach($rests as $index => $rest)
                         {{-- 承認待ちの時は、値がある行のみ表示 --}}
-                        @if(!isset($correction) || !empty($rest['start']))
+                        @if(!empty($rest['start']) || (!$correction && !$isApproved))
                             <tr class="list-form__row">
                                 <th class="list-form__label">
                                     休憩{{ $index == 0 ? '': $index + 1 }}
                                 </th>
                                 <td class="list-form__data">
                                     <div class="list-form__data-container">
-                                        <input type="time" name="rest_start[]" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ ($correction || $isApproved) ? 'readonly-input' : '' }}></input>
+                                        <input type="time" name="rest_start[]" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('rest_start.'.$index, $rest['start']) }}" {{ ($correction || $isApproved) ? 'readonly' : '' }}></input>
                                         <span class="separator">～</span>
-                                        <input type="time" name="rest_end[]" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ ($correction || $isApproved) ? 'readonly-input' : '' }}></input>
+                                        <input type="time" name="rest_end[]" class="form-control {{ ($correction || $isApproved) ? 'readonly-input' : '' }}" value="{{ old('rest_end.'.$index, $rest['end']) }}" {{ ($correction || $isApproved) ? 'readonly' : '' }}></input>
                                         @error('rest_start.'.$index)
                                             <p class="error_message">{{ $message }}</p>
                                         @enderror
@@ -87,7 +87,7 @@
                                     <input type="hidden" name="remarks_column" value="{{ old('remarks_column', $correction->remarks ?? '') }}">
                                 @else
                                     {{-- 通常時は入力枠を表示 --}}
-                                    <input type="text" name="remarks_column" class="remarks-column" 
+                                    <input type="text" name="remarks_column" class="remarks-column"
                                         value="{{ old('remarks_column', $correction->remarks ?? '') }}">
                                 @endif
 
