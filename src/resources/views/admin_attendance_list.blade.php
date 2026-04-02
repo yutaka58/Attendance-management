@@ -14,13 +14,13 @@
         </div>
         <div class="list-inner">
             <div class="list-calender">
-                <a href="?date={{ $prevDay }}" class="calender_btn">← 前日</a>
+                <a href="?date={{ $prevDay }}" class="calender-btn">← 前日</a>
                 <span class="current-day">
-                    <input type="date" id="date-picker" value="{{ $currentDay->format('Y-m-d') }}" onchange="location.href='?date=' + this.value">
                     <i class="fa-regular fa-calendar-days"></i>
-                    <span style="margin-left: 10px;">{{ $currentDay->format('Y/m/d') }}</span>
+                    <span style="margin-left:10px">{{ $currentDay->format('Y/m/d') }}</span>
+                    <input type="date" id="date-picker" value="{{ $currentDay->format('Y-m-d') }}" onchange="location.href='?date=' + this.value">
                 </span>
-                <a href="?date={{ $nextDay }}" class="calender_btn">翌日 →</a>
+                <a href="?date={{ $nextDay }}" class="calender-btn">翌日 →</a>
             </div>
             <table class="list-form__table">
                 <thead>

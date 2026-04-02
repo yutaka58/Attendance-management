@@ -33,15 +33,23 @@ h2 {
 }
 
 .current-month {
+    position: relative;
     font-weight: bold;
     font-size: 1.2em;
+    display: inline-flex;
+    align-items: center;
 }
 
 #date-picker {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 20px;
-    transform: scale(2);
+    height: 100%;
     border: none;
     background: transparent;
+    opacity: 0;
+    z-index: 10;
 }
 
 .list-calender {
@@ -88,7 +96,7 @@ h2 {
 }
 
 .list-form__table td:nth-child(1) {
-    padding-left: 20px;
+    padding-left: 50px;
 }
 
 .calender-btn {
@@ -111,4 +119,8 @@ h2 {
     font-weight: bold;
     border-radius: 5px;
     cursor: pointer;
+}
+
+.detail-link {
+    text-decoration: none;
 }

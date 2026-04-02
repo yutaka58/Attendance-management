@@ -19,7 +19,7 @@ class UserTableSeeder extends Seeder
         User::factory()->count(10)->create()->each(function ($user) {
             $count = 0;
 
-            for ($i = 0; $count < 20 && $i < 30; $i++) {
+            for ($i = 0; $count < 30 && $i < 40; $i++) {
 
             $date = now()->subDays($i);
 

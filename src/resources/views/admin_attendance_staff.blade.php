@@ -13,13 +13,13 @@
         </div>
         <div class="list-inner">
             <div class="list-calender">
-                <a href="?month={{ $prevMonth }}" class="calender_btn">← 前月</a>
+                <a href="?month={{ $prevMonth }}" class="calender-btn">← 前月</a>
                 <span class="current-month">
-                    <input type="date" id="date-picker" value="{{ $currentMonth->format('Y-m-d') }}" onchange="location.href='?date=' + this.value">
                     <i class="fa-regular fa-calendar-days"></i>
                     <span style="margin-left: 10px;">{{ $currentMonth->format('Y/m') }}</span>
+                    <input type="date" id="date-picker" value="{{ $currentMonth->format('Y-m-d') }}" onchange="location.href='?date=' + this.value">
                 </span>
-                <a href="?month={{ $nextMonth }}" class="calender_btn">翌月 →</a>
+                <a href="?month={{ $nextMonth }}" class="calender-btn">翌月 →</a>
             </div>
             <table class="list-form__table">
                 <thead>

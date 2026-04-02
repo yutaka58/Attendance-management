@@ -33,16 +33,23 @@ h2 {
 }
 
 .current-day {
+    position: relative;
     font-weight: bold;
     font-size: 1.2em;
+    display: inline-flex;
+    align-items: center;
 }
 
 #date-picker {
-    width: 25px;
-    transform: scale(2);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 100%;
     border: none;
     background: transparent;
     opacity: 0;
+    z-index: 10;
 }
 
 .list-calender {
@@ -97,4 +104,8 @@ h2 {
     color: #333;
     padding: 5px 15px;
     margin: 0 15px;
+}
+
+.detail-link {
+    text-decoration: none;
 }
