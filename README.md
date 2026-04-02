@@ -4,7 +4,7 @@
 
 **Docker ビルド**
 
-1. `git@github.com:yutaka58/Attendance-management.git`
+1. `git clone git@github.com:yutaka58/Attendance-management.git`
 2. `cd coachtech_Attendance-management`
 3. DockerDesktop アプリを立ち上げる
 4. `docker-compose up -d --build`
@@ -52,6 +52,12 @@ php artisan migrate
 
 ```bash
 php artisan db:seed
+```
+
+9. シンボリックリンク作成
+
+```bash
+php artisan storage:link
 ```
 
 ## 使用技術(実行環境)

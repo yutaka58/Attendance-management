@@ -80,7 +80,7 @@
                             <div class="list-form__remarks-container">
                                 @if($correction || $isApproved)
                                     {{-- 承認待ち・承認済みの場合はテキストのみ表示（枠線なし） --}}
-                                    <span class="remarks-text" style="display: inline-block; padding: 50px 0;">
+                                    <span class="remarks-text" style="display: inline-block; padding: 20px 0; font-weight:bold;">
                                         {{ old('remarks_column', $correction->remarks ?? ($attendance->remarks ?? '')) }}
                                     </span>
                                     {{-- フォーム送信が必要な場合は hidden で値を保持 --}}
@@ -99,13 +99,13 @@
                     </tr>
                 </table>
                 <div class="correction-btn">
-                    @if($isApproved)
+                    @if($correction && $correction->status == 1)
                         {{-- 承認済みの場合：ボタンを無効化して表示 --}}
                         <button type="button" class="correction approved" disabled
                                 style="background-color: #ccc; cursor: not-allowed; border: none;">
                             承認済み
                         </button>
-                    @elseif($correction)
+                    @elseif($correction && $correction->status == 0)
                         {{-- 承認待ちの場合 --}}
                         <p class="waiting-message" style="color: red; font-weight: bold;">
                             *承認待ちのため修正はできません。

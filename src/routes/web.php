@@ -77,7 +77,7 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::get('/admin/stamp_correction_request/list', [AdminStampCorrectionController::class, 'adminCorrection']);
 
     // 修正申請承認画面
-    Route::get('/admin/stamp_correction_request/approve/{id}', [AdminAttendanceController::class, 'showApprove']);
-    Route::post('/admin/stamp_correction_request/approve/{id}', [AdminAttendanceController::class, 'approve']);
+    Route::get('/admin/stamp_correction_request/approve/{id}', [AdminStampCorrectionController::class, 'showApprove']);
+    Route::post('/admin/stamp_correction_request/approve/{id}', [AdminStampCorrectionController::class, 'approve']);
 });
 
