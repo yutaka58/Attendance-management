@@ -16,45 +16,57 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
+        $testUser = User::create([
+                'name' => 'test',
+                'email' => 'test@example.com',
+                'password' => bcrypt('password'),
+            ]);
+
+        $this->createAttendanceForUser($testUser);
+
         User::factory()->count(10)->create()->each(function ($user) {
-            $count = 0;
+            $this->createAttendanceForUser($user);
+        });
+    }
 
-            for ($i = 0; $count < 30 && $i < 40; $i++) {
+    private function createAttendanceForUser($user)
+    {
 
+        $count = 0;
+        for ($i = 1; $count < 30 && $i < 40; $i++) {
             $date = now()->subDays($i);
 
-                if ($date->isWeekend()) continue;
+            if ($date->isWeekend()) continue;
 
-                // 1:出勤 (9:00)
-                \App\Models\Attendance::create([
-                    'user_id' => $user->id,
-                    'work_action_id' => 1,
-                    'created_at' => $date->copy()->hour(9)->minute(rand(0, 30)),
-                ]);
+            // 1:出勤 (9:00)
+            \App\Models\Attendance::create([
+                'user_id' => $user->id,
+                'work_action_id' => 1,
+                'created_at' => $date->copy()->hour(9)->minute(rand(0, 30)),
+            ]);
 
-                // 3:休憩入 (12:00)
-                \App\Models\Attendance::create([
-                    'user_id' => $user->id,
-                    'work_action_id' => 3,
-                    'created_at' => $date->copy()->hour(12)->minute(rand(0, 60)),
-                ]);
+            // 3:休憩入 (12:00)
+            \App\Models\Attendance::create([
+                'user_id' => $user->id,
+                'work_action_id' => 3,
+                'created_at' => $date->copy()->hour(12)->minute(rand(0, 60)),
+            ]);
 
-                // 4:休憩戻 (13:00)
-                \App\Models\Attendance::create([
-                    'user_id' => $user->id,
-                    'work_action_id' => 4,
-                    'created_at' => $date->copy()->hour(13)->minute(rand(0, 60)),
-                ]);
+            // 4:休憩戻 (13:00)
+            \App\Models\Attendance::create([
+                'user_id' => $user->id,
+                'work_action_id' => 4,
+                'created_at' => $date->copy()->hour(13)->minute(rand(0, 60)),
+            ]);
 
-                // 2:退勤 (18:00)
-                \App\Models\Attendance::create([
-                    'user_id' => $user->id,
-                    'work_action_id' => 2,
-                    'created_at' => $date->copy()->hour(18)->minute(rand(0, 30)),
-                ]);
+            // 2:退勤 (18:00)
+            \App\Models\Attendance::create([
+                'user_id' => $user->id,
+                'work_action_id' => 2,
+                'created_at' => $date->copy()->hour(18)->minute(rand(0, 30)),
+            ]);
 
-                $count++;
-            }
-        });
+            $count++;
+        }
     }
 }
