@@ -34,6 +34,7 @@ class AdminAttendanceController extends Controller
     {
         $targetDate = Carbon::parse($id);
         $currentDay = $targetDate;
+        $date = $id;
 
         $startOfDay = $targetDate->copy()->startOfDay();
         $endOfDay = $targetDate->copy()->endOfDay();
@@ -51,10 +52,19 @@ class AdminAttendanceController extends Controller
         $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
         // 休憩のペアを作成
 
-        $correction = null;
-        if ($attendance) {
-            $correction = CorrectionRequest::where('user_id', $userId)->where('attendance_id', $attendance->id)->where('status', 0)->latest()->first();
-        }
+        // 備考情報を取得
+        $attendanceRecord = Attendance::where('user_id', $userId)
+            ->where('work_action_id', 1)
+            ->whereBetween('created_at', [
+                $targetDate->copy()->startOfDay(),
+                $targetDate->copy()->endOfDay()
+            ])
+            ->first();
+
+            $correction = null;
+            if ($attendance) {
+                $correction = CorrectionRequest::where('user_id', $userId)->where('attendance_id', $attendance->id)->where('status', 0)->latest()->first();
+            }
 
         $rests = [];
         if($correction) {
@@ -88,7 +98,9 @@ class AdminAttendanceController extends Controller
         $start_time = $correction ? $correction->start_time : ($attendance ? $attendance->created_at->format('H:i') : '');
         $end_time = $correction ? $correction->end_time : ($end_attendance ? $end_attendance->created_at->format('H:i') : '');
 
-        return view('admin_attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction', 'currentDay', 'userId', 'user'));
+        $remarks = $attendance ? $attendance->remarks : '';
+
+        return view('admin_attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction', 'currentDay', 'userId', 'user', 'remarks', 'date'));
     }
 
     public function updateAttendance(AttendanceDetailRequest $request, $id)
@@ -100,25 +112,13 @@ class AdminAttendanceController extends Controller
         $rest_starts = $request->rest_start ?? [];
         $rest_ends = $request->rest_end ?? [];
 
-        // --- 1. 休憩の前後関係バリデーション (先にやる) ---
-        foreach ($rest_starts as $index => $start) {
-            $end = $rest_ends[$index] ?? null;
-            if (!empty($start) && !empty($end)) {
-                if (strtotime($start) >= strtotime($end)) {
-                    return back()->withErrors([
-                        "rest_end.{$index}" => '休憩終了時間は開始時間より後にしてください'
-                    ])->withInput();
-                }
-            }
-        }
-
-        // --- 2. 出勤・退勤の更新用データを定義 ---
+        // --- 1. 出勤・退勤の更新用データを定義 ---
         $actions = [
             1 => $request->start_time, // 出勤
             2 => $request->end_time,   // 退勤
         ];
 
-        // --- 3. 出勤・退勤の実行 ---
+        // --- 2. 出勤・退勤の実行 ---
         foreach ($actions as $actionId => $time) {
             if ($time) {
                 $newDateTime = Carbon::parse($date . ' ' . $time);
@@ -145,7 +145,7 @@ class AdminAttendanceController extends Controller
             }
         }
 
-        // --- 4. 休憩時間の更新（一度消して作り直す） ---
+        // --- 3. 休憩時間の更新（一度消して作り直す） ---
         Attendance::where('user_id', $userId)
             ->whereIn('work_action_id', [3, 4])
             ->whereDate('created_at', $date)
@@ -169,7 +169,26 @@ class AdminAttendanceController extends Controller
             }
         }
 
-        // --- 5. リダイレクト ---
+        // --- 4. 備考 範囲指定で検索 ---
+        $targetDate = Carbon::parse($date);
+        $attendanceRecord = Attendance::where('user_id', $userId)
+            ->where('work_action_id', 1)
+            ->whereBetween('created_at', [
+                $targetDate->copy()->startOfDay(),
+                $targetDate->copy()->endOfDay()
+            ])
+            ->first();
+
+        if (!$attendanceRecord) {
+            $attendanceRecord = new Attendance();
+            $attendanceRecord->user_id = $userId;
+            $attendanceRecord->work_action_id = 1;
+            $attendanceRecord->created_at = $targetDate->copy()->setTimeFromTimeString($request->start_time);
+        }
+
+        $attendanceRecord->remarks = $request->input('remarks_column');
+        $attendanceRecord->save();
+
         return redirect("/admin/attendance/staff/{$userId}");
     }
 

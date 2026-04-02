@@ -201,8 +201,8 @@ class AttendanceController extends Controller
         $day = $targetDate->format('j');
 
         // 承認済み、承認待ちの場合は、空枠を表示しない
-        if (!$correction && !$isApprove) {
-            $rests[] = ['rest' => '', 'end' => ''];
+        if (!$correction && !$isApproved) {
+            $rests[] = ['start' => '', 'end' => ''];
         }
 
         // 申請があればそれを優先、なければ元の打刻。どちらもなければ null

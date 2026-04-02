@@ -78,7 +78,7 @@
                         <th class="list-form__label">備考</th>
                         <td class="list-form__data">
                             <div class="list-form__remarks-container">
-                                <input type="text" name="remarks_column" class="remarks-column" value="{{ old('remarks_column', $correction->remarks ?? '') }}" {{ isset($correction) ? 'readonly' : '' }}>
+                                <input type="text" name="remarks_column" class="remarks-column" value="{{ old('remarks_column', $remarks) }}" {{ isset($correction) ? 'readonly' : '' }}>
                                 @error('remarks_column')
                                     <p class="error_message">{{ $message }}</p>
                                 @enderror

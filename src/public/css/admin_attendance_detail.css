@@ -114,6 +114,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     background-color: #fff;
     box-sizing: border-box;
     text-align: left;
+    font-weight: bold;
+    font-size: 15px;
 }
 
 .correction-btn {
