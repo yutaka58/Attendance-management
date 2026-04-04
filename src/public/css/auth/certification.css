@@ -1,0 +1,48 @@
+.header {
+    width: 100%;
+    padding: 15px 30px;
+    background-color: black;
+}
+
+.header-logo img {
+    width: 250px;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.certification-form {
+    text-align: center;
+}
+
+.certification-mail {
+    font-weight: bold;
+}
+
+.certification-btn {
+    cursor: pointer;
+    margin: 50px;
+}
+
+.certification-btn__content {
+    background-color: #c9c9c9;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 10px;
+
+}
+
+.resend-link {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+}

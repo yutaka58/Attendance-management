@@ -32,6 +32,11 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::post('/login', [AuthController::class, 'login']);
 
+// メール認証
+Route::get('/certification', [AuthController::class, 'certification'])->name('verification.notice');
+// 認証後
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->middleware(['auth', 'signed'])->name('verification.verify');
+
 // 一般　認証ルート
 Route::middleware(['auth', 'verified'])->group(function () {
     // ログアウト
