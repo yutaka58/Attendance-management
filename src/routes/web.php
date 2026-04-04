@@ -86,5 +86,8 @@ Route::middleware(['auth:admin'])->group(function () {
     // 修正申請承認画面
     Route::get('/admin/stamp_correction_request/approve/{id}', [AdminStampCorrectionController::class, 'showApprove']);
     Route::post('/admin/stamp_correction_request/approve/{id}', [AdminStampCorrectionController::class, 'approveUpdate']);
+
+    // csv出力
+    Route::post('/csv', [AdminAttendanceController::class, 'csv']);
 });
 

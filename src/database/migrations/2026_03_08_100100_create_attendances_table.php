@@ -23,6 +23,8 @@ class CreateAttendancesTable extends Migration
             $table->string('rest_end')->nullable();
             $table->string('remarks')->nullable();
             $table->integer('status')->default(0);
+            $table->time('total_rest_time')->nullable();
+            $table->time('work_time')->nullable();
             $table->timestamps();
         });
     }

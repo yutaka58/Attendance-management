@@ -34,48 +34,27 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($attendances as $userId => $group) {{-- $group はそのユーザーのその日の打刻記録 --}}
+                    {{-- 1. ループの開始で $userId を受け取る --}}
+                    @foreach($attendances as $userId => $group)
                         @php
-                            // 1. 基本データの取得
-                            $firstAttendance = $group->first(); // 最初のレコード（名前取得用）
-                            $clockIn = $group->where('work_action_id', 1)->first(); // 出勤
-                            $clockOut = $group->where('work_action_id', 2)->first(); // 退勤
+                            // Attendanceモデルのメソッドを使ってデータを取得
+                            $clockIn = $group->where('work_action_id', 1)->first();
+                            $clockOut = $group->where('work_action_id', 2)->first();
 
-                            // 2. 休憩時間の計算
-                            $totalRestMinutes = 0;
-                            $restStarts = $group->where('work_action_id', 3); // 休憩入
-
-                            foreach($restStarts as $start) {
-                                $end = $group->where('work_action_id', 4)
-                                             ->where('created_at', '>', $start->created_at)
-                                             ->first();
-                                if ($end) {
-                                    $totalRestMinutes += $start->created_at->diffInMinutes($end->created_at);
-                                }
-                            }
-
-                            // 表示用フォーマット
-                            $restTimeDisplay = sprintf('%02d:%02d', floor($totalRestMinutes / 60), $totalRestMinutes % 60);
-
-                            // 3. 勤務時間の計算
-                            $workTimeDisplay = '--:--';
-                            if ($clockIn && $clockOut) {
-                                $totalStayMinute = $clockIn->created_at->diffInMinutes($clockOut->created_at);
-                                $netWorkMinutes = max(0, $totalStayMinute - $totalRestMinutes);
-                                $workTimeDisplay = sprintf('%02d:%02d', floor($netWorkMinutes / 60), $netWorkMinutes % 60);
-                            }
+                            $restMinutes = \App\Models\Attendance::getRestMinutes($group);
+                            $workTime = \App\Models\Attendance::getWorkTimeDisplay($group);
+                            $restDisplay = $restMinutes > 0 ? sprintf('%02d:%02d', floor($restMinutes / 60), $restMinutes % 60) : '';
                         @endphp
+
                         <tr class="list-form__row">
-                            {{-- 名前 --}}
-                            <td class="list-form__data">{{ $firstAttendance->user->name ?? '不明' }}</td>
-                            {{-- 出勤 --}}
-                            <td class="list-form__data">{{ $clockIn ? $clockIn->created_at->format('H:i'): null }}</td>
-                            {{-- 退勤 --}}
-                            <td class="list-form__data">{{ $clockOut ? $clockOut->created_at->format('H:i'): null }}</td>
-                            {{-- 休憩合計時間 --}}
-                            <td class="list-form__data">{{ $totalRestMinutes > 0 ? $restTimeDisplay : '' }}</td>
-                            {{-- 勤務時間 --}}
-                            <td class="list-form__data">{{ ($clockIn && $clockOut) ? $workTimeDisplay : '' }}</td>
+                            {{-- ...名前、出勤、退勤、休憩、合計の表示... --}}
+                            <td class="list-form__data">{{ $clockIn->user->name ?? '不明' }}</td>
+                            <td class="list-form__data">{{ $clockIn->start_time ?? '' }}</td>
+                            <td class="list-form__data">{{ $clockIn->end_time ?? ($clockOut->end_time ?? '') }}</td>
+                            <td class="list-form__data">{{ $restDisplay }}</td>
+                            <td class="list-form__data">{{ $workTime }}</td>
+
+                            {{-- 2. 詳細リンクで $userId を使用 --}}
                             <td class="list-form__data">
                                 <a href="/admin/attendance/{{ $currentDay->format('Y-m-d') }}?user_id={{ $userId }}" class="detail-link">詳細</a>
                             </td>

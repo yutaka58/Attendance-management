@@ -38,8 +38,6 @@
 
     if (clickedButton && clickedButton.innerText.includes('出勤')) {
         statusText.innerText = '出勤中...';
-        // 送信直後に無効化するとデータが飛ばないため、
-        // ユーザーには「送信中」を伝えるだけに留めるのが無難です
     }
 });
 </script>

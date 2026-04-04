@@ -52,31 +52,36 @@ class AdminAttendanceController extends Controller
         $rests_end = Attendance::where('user_id', $userId)->where('work_action_id', 4)->whereBetween('created_at', [$startOfDay, $endOfDay])->orderBy('created_at', 'asc')->get();
         // 休憩のペアを作成
 
-        // 備考情報を取得
-        $attendanceRecord = Attendance::where('user_id', $userId)
-            ->where('work_action_id', 1)
-            ->whereBetween('created_at', [
-                $targetDate->copy()->startOfDay(),
-                $targetDate->copy()->endOfDay()
-            ])
-            ->first();
+        $correction = null;
+        $isApproved = false;
 
-            $correction = null;
-            if ($attendance) {
-                $correction = CorrectionRequest::where('user_id', $userId)->where('attendance_id', $attendance->id)->where('status', 0)->latest()->first();
+        if ($attendance) {
+                // 承認待ち(0)または承認済み(1)の最新申請を取得
+                $latestRequest = CorrectionRequest::where('user_id', $userId)
+                    ->where('attendance_id', $attendance->id)
+                    ->whereIn('status', [0, 1])
+                    ->latest()
+                    ->first();
+
+                if ($latestRequest) {
+                    $correction = $latestRequest;
+                    if ($latestRequest->status == 1) {
+                        $isApproved = true; // ★承認済みフラグを立てる
+                    }
+                }
             }
 
-        $rests = [];
-        if($correction) {
-            // 修正の申請があった場合、申請データを表示用に更新
-            $c_starts = json_decode($correction->rest_start, true) ?? [];
-            $c_ends = json_decode($correction->rest_end, true) ?? [];
+            $rests = [];
+            if($correction) {
+                // 修正の申請があった場合（承認待ち・承認済みどちらも）
+                $c_starts = json_decode($correction->rest_start, true) ?? [];
+                $c_ends = json_decode($correction->rest_end, true) ?? [];
                 foreach($c_starts as $index => $val) {
                     if(!empty($val)) {
                         $rests[] = ['start' => $val, 'end' => $c_ends[$index] ?? ''];
                     }
                 }
-        } else {
+            } else {
             // 申請がなかった場合、元のデータを表示
             foreach($rests_start as $index => $start) {
                 $rests[] = [
@@ -91,8 +96,9 @@ class AdminAttendanceController extends Controller
         $month = $targetDate->format('n');
         $day = $targetDate->format('j');
 
-        // ★ 常に空の休憩枠を1つ追加する
-        $rests[] = ['start' => '', 'end' => ''];
+        if (!$correction && !$isApproved) {
+            $rests[] = ['start' => '', 'end' => ''];
+        }
 
         // 申請があればそれを優先、なければ元の打刻。どちらもなければ null
         $start_time = $correction ? $correction->start_time : ($attendance ? $attendance->created_at->format('H:i') : '');
@@ -100,7 +106,7 @@ class AdminAttendanceController extends Controller
 
         $remarks = $attendance ? $attendance->remarks : '';
 
-        return view('admin_attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction', 'currentDay', 'userId', 'user', 'remarks', 'date'));
+        return view('admin_attendance_detail', compact('attendance', 'year', 'month', 'day', 'start_time', 'end_time', 'rests', 'correction', 'currentDay', 'userId', 'user', 'remarks', 'date', 'isApproved'));
     }
 
     public function updateAttendance(AttendanceDetailRequest $request, $id)
@@ -208,6 +214,9 @@ class AdminAttendanceController extends Controller
         $prevMonth = $currentMonth->copy()->subMonth()->format('Y-m');
         $nextMonth = $currentMonth->copy()->addMonth()->format('Y-m');
 
+        // 追加：現在の月を「日付」として扱うための変数を定義（Bladeで使っている名前に合わせる）
+        $currentDay = $currentMonth;
+
         $user = User::find($id);
 
         // ユーザーの打刻データを取得し、日付ごとにグループ化する
@@ -229,7 +238,7 @@ class AdminAttendanceController extends Controller
 
         $attendances = collect($allDays)->merge($dbAttendances);
 
-        return view('admin_attendance_staff', compact('user', 'monthParam', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances', 'tempDay'));
+        return view('admin_attendance_staff', compact('user', 'monthParam', 'currentDay', 'currentMonth', 'prevMonth', 'nextMonth', 'attendances', 'tempDay'));
     }
 
     public function correctionRequest(Request $request)
@@ -251,7 +260,7 @@ class AdminAttendanceController extends Controller
         // 1. 申請データを取得
         $correction = CorrectionRequest::with(['user', 'attendance'])->findOrFail($id);
 
-        // 2. 日付を分割（Viewで $year, $month, $day を使っているため）
+        // 2. 日付を分割
         $targetDate = Carbon::parse($correction->attendance->created_at);
         $year = $targetDate->format('Y');
         $month = $targetDate->format('n');
@@ -271,12 +280,52 @@ class AdminAttendanceController extends Controller
         $start_time = $correction->start_time;
         $end_time = $correction->end_time;
 
-        // 作成した詳細画面のViewを返す
         return view('admin_stamp_correction_approve', compact('correction', 'year', 'month', 'day', 'rests', 'start_time', 'end_time'
         ));
     }
 
-// AdminAttendanceController.php の syncAttendanceData メソッド
+    public function csv(Request $request)
+    {
+        // 全件ではなく、work_action_id が 1 (出勤) のものだけを取得
+        $attendances = Attendance::with('user')
+            ->where('work_action_id', 1)
+            ->get();
 
+        $csvHeader = ['ユーザー名','年月日','出勤','退勤','休憩','合計'];
+        $temps = [$csvHeader];
 
+        foreach ($attendances as $attendance) {
+            // 同じ日の「退勤(id:2)」レコードを探して、そこにある計算済みの値を取る
+            $clockOutRecord = Attendance::where('user_id', $attendance->user_id)
+                ->where('work_action_id', 2)
+                ->whereDate('created_at', $attendance->created_at->toDateString())
+                ->first();
+
+            $temp = [
+                $attendance->user->name,
+                $attendance->created_at->format('Y/m/d'),
+                $attendance->start_time,
+                $clockOutRecord->end_time ?? '',
+                $clockOutRecord->total_rest_time ?? '',
+                $clockOutRecord->work_time ?? '',
+            ];
+            array_push($temps, $temp);
+        }
+
+        $stream = fopen('php://temp', 'r+b');
+        foreach ($temps as $temp) {
+            fputcsv($stream, $temp);
+        }
+        rewind($stream);
+
+        $csv = stream_get_contents($stream);
+        $csv = mb_convert_encoding($csv, 'SJIS-win', 'UTF-8');
+
+        $filename = "勤怠一覧_" . now()->format('Ymd') . ".csv";
+
+        return response($csv, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+        ]);
+    }
 }
