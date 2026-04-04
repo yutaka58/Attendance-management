@@ -62,14 +62,26 @@ class AuthController extends Controller
         return redirect('/login');
     }
 
+    // 認証画面を表示
     public function certification()
     {
         return view('auth.certification');
     }
 
+    // メール送信
     public function verify(EmailVerificationRequest $request)
     {
         $request->fulfill();
+
+        return redirect('/attendance');
+    }
+
+    // メール再送信
+    public function resend(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        $request->user()->sendEmailVerificationNotification();
 
         return redirect('/attendance');
     }

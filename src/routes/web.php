@@ -36,6 +36,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/certification', [AuthController::class, 'certification'])->name('verification.notice');
 // 認証後
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])->middleware(['auth', 'signed'])->name('verification.verify');
+// 再送信
+Route::post('/email/verification-notification', [AuthController::class, 'resend'])->middleware('auth')->name('verification.send');
 
 // 一般　認証ルート
 Route::middleware(['auth', 'verified'])->group(function () {
