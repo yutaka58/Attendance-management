@@ -1,11 +1,11 @@
-# coachtech 勤怠管理アプリ（coachtech_Attendance-management）
+# coachtech 勤怠管理アプリ（Attendance-management）
 
 ## 環境構築
 
 **Docker ビルド**
 
 1. `git clone git@github.com:yutaka58/Attendance-management.git`
-2. `cd coachtech_Attendance-management`
+2. `cd Attendance-management`
 3. DockerDesktop アプリを立ち上げる
 4. `docker-compose up -d --build`
 
