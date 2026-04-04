@@ -24,9 +24,6 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // ログイン
-        Auth::login($user);
-
         // 認証メール送信
         event(new \Illuminate\Auth\Events\Registered($user));
 
